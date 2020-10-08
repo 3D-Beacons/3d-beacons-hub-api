@@ -1,4 +1,4 @@
-name: Registry CI
+name: Hub API CI
 
 on: [ push ]
 #     branches: [ master, development ]

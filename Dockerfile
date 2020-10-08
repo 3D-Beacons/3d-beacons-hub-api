@@ -5,7 +5,6 @@ RUN apk add git
 
 ADD requirements.txt /app/
 ADD logging.conf /app/
-ADD stub.json /app/
 RUN pip install -r requirements.txt
 ADD /app /app/app
 WORKDIR /app
