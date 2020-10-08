@@ -1,0 +1,37 @@
+{
+    "providers": [
+        {
+            "providerId": "provider1",
+            "providerName": "Provider1",
+            "providerDescription": "Description for provider1",
+            "providerUrl": "https://provider1.org/",
+            "baseServiceUrl": "https://provider1.org/",
+            "providerLogo": "https://provider1.org/logo.png"
+        },
+        {
+            "providerId": "provider2",
+            "providerName": "Provider2",
+            "providerDescription": "Description for provider2",
+            "providerUrl": "https://provider2.org/",
+            "baseServiceUrl": "https://provider2.org/",
+            "providerLogo": "https://provider2.org/logo.png"
+        }
+    ],
+    "services": [
+        {
+            "serviceType": "service1",
+            "provider": "provider1",
+            "accessPoint": "service1/"
+        },
+        {
+            "serviceType": "service1",
+            "provider": "provider2",
+            "accessPoint": "service1/"
+        },
+        {
+            "serviceType": "service2",
+            "provider": "provider2",
+            "accessPoint": "service2/"
+        }
+    ]
+}

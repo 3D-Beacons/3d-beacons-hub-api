@@ -1,0 +1,12 @@
+.venv/
+.vscode/
+venv/
+__pycache__/
+htmlcov
+.pyc
+.tox
+.coverage*
+*.egg-info
+temp/
+run.sh
+.mypy_cache
