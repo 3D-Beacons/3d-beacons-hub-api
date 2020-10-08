@@ -19,7 +19,7 @@ def read_data_file(filename):
 
 
 def get_services(service_type: str = None, provider: Query = None):
-    """ Returns a list of services available.
+    """Returns a list of services available.
 
     Args:
         service_type (str, optional): A type of service.
