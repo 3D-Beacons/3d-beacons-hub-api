@@ -1,0 +1,73 @@
+[
+    {
+        "confidence_avg_local_score": 0.75,
+        "confidence_type": "QMEANDisCo",
+        "confidence_version": "4.2.0",
+        "coverage": 0.903,
+        "created": "2021-09-08",
+        "model_category": "TEMPLATE-BASED",
+        "model_format": "PDB",
+        "model_identifier": "61389c5852531780d6f7dd27",
+        "model_type": "ATOMIC",
+        "model_url": "https: //swissmodel.expasy.org/3d-beacons/uniprot/P0DTC2.pdb?range=14-1162&template=6xr8.1.C&provider=swissmodel",
+        "oligo_state": "HOMO-OLIGOMER",
+        "provider": "SWISS-MODEL",
+        "sequence_identity": 1.0,
+        "uniprot_end": 1162,
+        "uniprot_start": 14
+    },
+    {
+        "confidence_avg_local_score": 0.729,
+        "confidence_type": "QMEANDisCo",
+        "confidence_version": "4.2.0",
+        "coverage": 0.881,
+        "created": "2021-09-08",
+        "model_category": "TEMPLATE-BASED",
+        "model_format": "PDB",
+        "model_identifier": "61389ce530d29b593c8f0e94",
+        "model_type": "ATOMIC",
+        "model_url": "https://swissmodel.expasy.org/3d-beacons/uniprot/P0DTC2.pdb?range=27-1147&template=7kj2.1.C&provider=swissmodel",
+        "oligo_state": "HETERO-OLIGOMER",
+        "provider": "SWISS-MODEL",
+        "sequence_identity": 1.0,
+        "uniprot_end": 1147,
+        "uniprot_start": 27
+    },
+    {
+        "confidence_avg_local_score": 0.775,
+        "confidence_type": "QMEANDisCo",
+        "confidence_version": "4.2.0",
+        "coverage": 0.891,
+        "created": "2021-09-08",
+        "model_category": "TEMPLATE-BASED",
+        "model_format": "PDB",
+        "model_identifier": "61389ce530d29b593c8f0e9c",
+        "model_type": "ATOMIC",
+        "model_url": "https://swissmodel.expasy.org/3d-beacons/uniprot/P0DTC2.pdb?range=14-1147&template=7mjm.1.C&provider=swissmodel",
+        "oligo_state": "HETERO-OLIGOMER",
+        "provider": "SWISS-MODEL",
+        "sequence_identity": 1.0,
+        "uniprot_end": 1147,
+        "uniprot_start": 14
+    },
+    {
+        "model_identifier": "4545",
+        "model_category": "ATOMIC",
+        "provider": "SASBDB",
+        "created": "2020-06-25",
+        "uniprot_start": "None",
+        "uniprot_end": "None",
+        "model_url": "https://www.sasbdb.org/media/pdb_file/SASDJG4_fit1_model1.pdb",
+        "model_format": "PDB"
+    },
+    {
+        "model_identifier": "4546",
+        "model_category": "MIX",
+        "provider": "SASBDB",
+        "created": "2020-06-25",
+        "uniprot_start": "None",
+        "uniprot_end": "None",
+        "model_url": "https://www.sasbdb.org/media/pdb_file/SASDJH4_fit1_model1.pdb",
+        "model_format": "PDB"
+    }
+]
