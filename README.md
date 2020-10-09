@@ -54,7 +54,7 @@ Alternatively, the API can be run from the Dockerfile. To do so, follow below st
 docker build -t 3dbeacons-hub-api .
 
 # run the application
-docker run -p 80:80 3dbeacons-hub-api
+docker run -p 8000:8000 3dbeacons-hub-api
 ```
 
 ## Testing
