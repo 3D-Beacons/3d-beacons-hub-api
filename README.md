@@ -34,7 +34,8 @@ Now install the project dependencies.
 ```
 
 ### Provide registry data
-This API works on a registry which includes the details of data services and the respective providers which is configured in `app/config/data.json`.
+This API works on a registry which includes the details of data services and the respective providers which is configured in `app/config/data.json`. It can be overriden to be picked from a URL. For doing so,
+set the environmental variable `REGISTRY_DATA_JSON` as the URL.
 
 ### Run the instance
 To run the API locally, run below commands.
