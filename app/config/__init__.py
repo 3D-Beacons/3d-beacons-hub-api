@@ -14,6 +14,27 @@ def read_data_file(filename):
     data_filepath = os.path.join(os.path.dirname(__file__), filename)
     with open(data_filepath) as fp:
         data = json.load(fp)
+
+    # check for REGISTRY_DATA_JSON in env and loads the JSON if exists
+    data_json_env = os.getenv("REGISTRY_DATA_JSON")
+    if data_json_env:
+        logger.info(
+            f"REGISTRY_DATA_JSON env var exists, trying to load JSON @ {data_json_env}"
+        )
+
+        import requests
+
+        try:
+            request_data = requests.get(data_json_env)
+            if request_data.status_code == 200:
+                data = request_data.json()
+            else:
+                raise Exception
+        except Exception:
+            logger.info(
+                "Registry JSON cannot be retrieved, fallback to default data.json"
+            )
+
     logger.info(f"Loaded data JSON: {DATA_FILE}")
     return data
 
