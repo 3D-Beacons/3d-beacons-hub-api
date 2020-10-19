@@ -36,3 +36,10 @@ jobs:
     - name: Style check
       run: |
         tox -e pep8
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-beacons-hub-api
+        fail_ci_if_error: true
