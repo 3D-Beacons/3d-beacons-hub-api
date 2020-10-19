@@ -1,4 +1,3 @@
-import asyncio
 from typing import Any, List, Optional
 
 from fastapi.params import Path, Query
@@ -8,8 +7,7 @@ from starlette.responses import JSONResponse
 
 from app.config import get_base_service_url, get_services
 from app.uniprot.schema import Result, Structure, UniProtEntry
-from app.utils import request_get_stub
-from app import logger
+from app.utils import send_async_requests
 
 uniprot_route = APIRouter()
 
@@ -36,7 +34,7 @@ async def get_uniprot(
         alias="range",
     ),
 ):
-    """ Returns experimental and theoretical models for a UniProt accession or entry name
+    """Returns experimental and theoretical models for a UniProt accession or entry name
 
     Args:
         qualifier (str): UniProtKB accession number (AC) or entry name (ID).
@@ -51,7 +49,6 @@ async def get_uniprot(
 
     services = get_services(service_type="uniprot", provider=provider)
     calls = []
-
     for service in services:
         base_url = get_base_service_url(service["provider"])
         final_url = base_url + service["accessPoint"] + f"{qualifier}.json?"
@@ -61,8 +58,7 @@ async def get_uniprot(
 
         calls.append(final_url)
 
-    tasks = [asyncio.create_task(request_get_stub(call)) for call in calls]
-    result = await asyncio.gather(*tasks)
+    result = await send_async_requests(calls)
     final_result = [x.json() for x in result if x and x.status_code == 200]
 
     if not final_result:

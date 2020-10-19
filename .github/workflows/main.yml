@@ -1,0 +1,38 @@
+name: Hub API CI
+
+on: [ push ]
+#     branches: [ master, development ]
+#   pull_request:
+#     branches: [ master, development ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.7]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install -r dev-requirements.txt
+        pip install -r requirements.txt
+    - name: Run Tests
+      run: |
+        tox -e py3
+    - name: Format check
+      run: |
+        tox -e fmt-check
+    - name: Type check
+      run: |
+        tox -e mypy
+    - name: Style check
+      run: |
+        tox -e pep8
