@@ -28,7 +28,7 @@ uniprot_route = APIRouter()
 async def get_uniprot_summary(
     qualifier: Any = Path(..., description=UNIPROT_QUAL_DESC),
     provider: Optional[Any] = Query(
-        None, enum=["swissmodel", "genome3d", "foldx", "pdbe", "ped"]
+        None, enum=[x["provider"] for x in get_services("summary")]
     ),
     template: Optional[Any] = Query(
         None,
@@ -92,7 +92,7 @@ async def get_uniprot(
         ..., description="UniProtKB accession number (AC) or entry name (ID)"
     ),
     provider: Optional[Any] = Query(
-        None, enum=["swissmodel", "genome3d", "foldx", "pdb"]
+        None, enum=[x["provider"] for x in get_services("uniprot")]
     ),
     template: Optional[Any] = Query(
         None,
