@@ -21,6 +21,9 @@
 - [Protein Ensemble Database](https://proteinensemble.org/)
 - [SWISS-MODEL](https://swissmodel.expasy.org/)
 
+## About the 3D-Beacons Hub API
+The 3D-Beacons Hub API is an integrator that makes API requests to Beacon APIs and collates, ranks and exposes data. The Hub API is using the [3D-Beacons Registry](https://github.com/3D-Beacons/3d-beacons-registry) to look up which Beacons support what API endpoint.
+
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
