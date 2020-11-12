@@ -6,10 +6,82 @@ from starlette import status
 from starlette.responses import JSONResponse
 
 from app.config import get_base_service_url, get_services
-from app.uniprot.schema import Result, Structure, UniProtEntry
+from app.constants import TEMPLATE_DESC, UNIPROT_QUAL_DESC
+from app.uniprot.schema import (
+    Result,
+    ResultSummary,
+    Structure,
+    StructureSummary,
+    UniProtEntry,
+)
 from app.utils import send_async_requests
 
 uniprot_route = APIRouter()
+
+
+@uniprot_route.get(
+    "/summary/{qualifier}.json",
+    status_code=status.HTTP_200_OK,
+    response_model=ResultSummary,
+    response_model_exclude_unset=True,
+)
+async def get_uniprot_summary(
+    qualifier: Any = Path(..., description=UNIPROT_QUAL_DESC),
+    provider: Optional[Any] = Query(
+        None, enum=["swissmodel", "genome3d", "foldx", "pdbe", "ped"]
+    ),
+    template: Optional[Any] = Query(
+        None,
+        description=TEMPLATE_DESC,
+    ),
+    res_range: Optional[Any] = Query(
+        None,
+        description="Specify a UniProt sequence residue range",
+        pattern="^[0-9]+-[0-9]+$",
+        alias="range",
+    ),
+):
+    f"""Returns summary of experimental and theoretical models for a UniProt
+    accession or entry name
+
+    Args:
+        qualifier (str): {UNIPROT_QUAL_DESC}
+        provider (str, optional): Data provider
+        template (str, optional): {TEMPLATE_DESC}
+        res_range (str, optional): Residue range
+
+    Returns:
+        Result: A Result summary object with experimental and theoretical models.
+    """
+
+    services = get_services(service_type="summary", provider=provider)
+    calls = []
+    for service in services:
+        base_url = get_base_service_url(service["provider"])
+        final_url = base_url + service["accessPoint"] + f"{qualifier}.json?"
+
+        if res_range:
+            final_url = f"{final_url}range={res_range}"
+
+        calls.append(final_url)
+
+    result = await send_async_requests(calls)
+    final_result = [x.json() for x in result if x and x.status_code == 200]
+
+    if not final_result:
+        return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
+
+    final_structures: List[StructureSummary] = []
+    uniprot_entry: UniProtEntry = UniProtEntry(**final_result[0]["uniprot_entry"])
+
+    for item in final_result:
+        final_structures.extend(item["structures"])
+
+    api_result: ResultSummary = ResultSummary(
+        **{"uniprot_entry": uniprot_entry, "structures": final_structures}
+    )
+
+    return api_result
 
 
 @uniprot_route.get(
