@@ -12,8 +12,8 @@ class UniProtEntry(BaseModel):
     uniprot_md5: Optional[str] = Field(
         None, description="MD5 hash of the UniProt sequence"
     )
-    sequence_length: int = Field(
-        ..., description="Length of the UniProt sequence, e.g. 100"
+    sequence_length: Optional[int] = Field(
+        None, description="Length of the UniProt sequence, e.g. 100"
     )
     ac: str = Field(..., description=UNIPROT_AC_DESC)
     id: Optional[str] = Field(None, description=UNIPROT_ID_DESC)
