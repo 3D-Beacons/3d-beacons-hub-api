@@ -54,6 +54,13 @@ async def get_uniprot_summary(
         Result: A Result summary object with experimental and theoretical models.
     """
 
+    qualifier = qualifier.upper().strip(" ")
+    if provider:
+        provider = provider.strip(" ")
+    if template:
+        template = template.strip(" ")
+    if res_range:
+        res_range = res_range.strip(" ")
     services = get_services(service_type="summary", provider=provider)
     calls = []
     for service in services:
@@ -119,6 +126,13 @@ async def get_uniprot(
         Result: A Result object with experimental and theoretical models.
     """
 
+    qualifier = qualifier.upper().strip(" ")
+    if provider:
+        provider = provider.strip(" ")
+    if template:
+        template = template.strip(" ")
+    if res_range:
+        res_range = res_range.strip(" ")
     services = get_services(service_type="uniprot", provider=provider)
     calls = []
     for service in services:
