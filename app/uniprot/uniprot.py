@@ -84,6 +84,9 @@ async def get_uniprot_summary(
     for item in final_result:
         final_structures.extend(item["structures"])
 
+    if not final_structures:
+        return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
+
     api_result: ResultSummary = ResultSummary(
         **{"uniprot_entry": uniprot_entry, "structures": final_structures}
     )
