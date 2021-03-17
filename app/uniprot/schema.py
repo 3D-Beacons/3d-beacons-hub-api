@@ -184,6 +184,7 @@ class StructureSummary(BaseModel):
     model_format: ModelFormat = Field(
         None, description="File format of the coordinates, e.g. PDB"
     )
+<<<<<<< HEAD
     experimental_method: ExperimentalMethod = Field(
         None, description="Experimental method used to determine the template"
     )
@@ -206,6 +207,8 @@ class StructureSummary(BaseModel):
     ensemble_sample_format: ModelFormat = Field(
         None, description="File format of the sample coordinates, e.g. PDB"
     )
+=======
+>>>>>>> Added model_format to uniprot API specs
 
 
 class Structure(BaseModel):
