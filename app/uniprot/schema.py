@@ -8,6 +8,12 @@ from pydantic import BaseModel, Field
 from app.constants import UNIPROT_AC_DESC, UNIPROT_ID_DESC
 
 
+class ModelFormat(Enum):
+    PDB = "PDB"
+    MMCIF = "MMCIF"
+    BCIF = "BCIF"
+
+
 class UniProtEntry(BaseModel):
     uniprot_md5: Optional[str] = Field(
         None, description="MD5 hash of the UniProt sequence"
@@ -157,6 +163,9 @@ class StructureSummary(BaseModel):
         None, description="Average of the local QMEAN scores"
     )
     model_url: str = Field(..., description="URL of the model coordinates")
+    model_format: ModelFormat = Field(
+        None, description="File format of the coordinates, e.g. PDB"
+    )
 
 
 class Structure(BaseModel):
@@ -211,6 +220,9 @@ class Structure(BaseModel):
         "protein of interest",
     )
     chains: List[Chain]
+    model_format: ModelFormat = Field(
+        None, description="File format of the coordinates, e.g. PDB"
+    )
 
 
 class Result(BaseModel):
