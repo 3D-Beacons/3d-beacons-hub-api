@@ -55,6 +55,7 @@ class Provider(Enum):
     GENOME3D = "GENOME3D"
     FOLDX = "FOLDX"
     PED = "PED"
+    ALPHAFOLD_DB = "AlphaFold DB"
 
 
 class ModelCategory(Enum):
@@ -62,6 +63,7 @@ class ModelCategory(Enum):
     TEMPLATE_BASED = "TEMPLATE-BASED"
     TEMPLATE_FREE = "TEMPLATE-FREE"
     CONFORMATIONAL_ENSEMBLE = "CONFORMATIONAL ENSEMBLE"
+    DEEP_LEARNING = "Deep learning"
 
 
 class Template(BaseModel):
