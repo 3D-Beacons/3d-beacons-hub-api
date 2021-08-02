@@ -1,0 +1,303 @@
+{
+    "uniprot_entry": {
+        "sequence_length": 413,
+        "ac": "P07550",
+        "id": "ADRB2_HUMAN"
+    },
+    "structures": [
+        {
+            "model_identifier": "2rh1",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2007-10-05",
+            "sequence_identity": 69,
+            "uniprot_start": 1,
+            "uniprot_end": 365,
+            "resolution": 2.4,
+            "coverage": 80.39,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/2rh1/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "3d4s",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2008-05-14",
+            "sequence_identity": 68,
+            "uniprot_start": 1,
+            "uniprot_end": 348,
+            "resolution": 2.8,
+            "coverage": 76.27,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/3d4s/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "5d5a",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2015-08-10",
+            "sequence_identity": 69,
+            "uniprot_start": 1,
+            "uniprot_end": 365,
+            "resolution": 2.4826,
+            "coverage": 80.39,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/5d5a/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "5d6l",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2015-08-12",
+            "sequence_identity": 69,
+            "uniprot_start": 1,
+            "uniprot_end": 365,
+            "resolution": 3.2,
+            "coverage": 78.69,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/5d6l/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "5x7d",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2017-02-25",
+            "sequence_identity": 69,
+            "uniprot_start": 1,
+            "uniprot_end": 365,
+            "resolution": 2.703,
+            "coverage": 80.39,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/5x7d/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "6ps3",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2019-07-12",
+            "sequence_identity": 68,
+            "uniprot_start": 1,
+            "uniprot_end": 348,
+            "resolution": 2.5,
+            "coverage": 76.27,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/6ps3/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "3nya",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2010-07-14",
+            "sequence_identity": 68,
+            "uniprot_start": 1,
+            "uniprot_end": 348,
+            "resolution": 3.16,
+            "coverage": 76.27,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/3nya/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "6ps6",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2019-07-12",
+            "sequence_identity": 68,
+            "uniprot_start": 1,
+            "uniprot_end": 348,
+            "resolution": 2.7,
+            "coverage": 76.27,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/6ps6/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "6prz",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2019-07-12",
+            "sequence_identity": 68,
+            "uniprot_start": 1,
+            "uniprot_end": 348,
+            "resolution": 2.8,
+            "coverage": 76.27,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/6prz/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "6ps5",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2019-07-12",
+            "sequence_identity": 68,
+            "uniprot_start": 1,
+            "uniprot_end": 348,
+            "resolution": 2.9,
+            "coverage": 76.27,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/6ps5/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "6ps2",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2019-07-12",
+            "sequence_identity": 68,
+            "uniprot_start": 1,
+            "uniprot_end": 348,
+            "resolution": 2.4,
+            "coverage": 76.27,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/6ps2/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "6oba",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2019-03-20",
+            "sequence_identity": 69,
+            "uniprot_start": 1,
+            "uniprot_end": 365,
+            "resolution": 3.1,
+            "coverage": 80.39,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/6oba/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "6mxt",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2018-10-31",
+            "sequence_identity": 91,
+            "uniprot_start": 29,
+            "uniprot_end": 365,
+            "resolution": 2.95934213525,
+            "coverage": 74.82,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/6mxt/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "4qkx",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2014-06-10",
+            "sequence_identity": 90,
+            "uniprot_start": 29,
+            "uniprot_end": 348,
+            "resolution": 3.3,
+            "coverage": 70.7,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/4qkx/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "4lde",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2013-06-24",
+            "sequence_identity": 90,
+            "uniprot_start": 29,
+            "uniprot_end": 348,
+            "resolution": 2.79,
+            "coverage": 70.7,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/4lde/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "4ldl",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2013-06-24",
+            "sequence_identity": 90,
+            "uniprot_start": 29,
+            "uniprot_end": 348,
+            "resolution": 3.1,
+            "coverage": 70.7,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/4ldl/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "4ldo",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2013-06-24",
+            "sequence_identity": 90,
+            "uniprot_start": 29,
+            "uniprot_end": 348,
+            "resolution": 3.2,
+            "coverage": 70.7,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/4ldo/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "6ni3",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2018-12-26",
+            "sequence_identity": 99,
+            "uniprot_start": 29,
+            "uniprot_end": 341,
+            "resolution": 3.8,
+            "coverage": 75.79,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/6ni3/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "6n48",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2018-11-17",
+            "sequence_identity": 90,
+            "uniprot_start": 29,
+            "uniprot_end": 348,
+            "resolution": 3.2,
+            "coverage": 70.7,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/6n48/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "5jqh",
+            "model_category": "EXPERIMENTALLY DETERMINED",
+            "provider": "PDBE",
+            "created": "2016-05-05",
+            "sequence_identity": 90,
+            "uniprot_start": 30,
+            "uniprot_end": 348,
+            "resolution": 3.2,
+            "coverage": 70.94,
+            "model_url": "https://www.ebi.ac.uk/pdbe/coordinates/5jqh/full?encoding=bcif&lowPrecisionCoords=1"
+        },
+        {
+            "model_identifier": "PED00087",
+            "model_category": "CONFORMATIONAL ENSEMBLE",
+            "model_url": "https://proteinensemble.org/PED00087",
+            "provider": "PED",
+            "created": "2020-10-01",
+            "uniprot_start": 20,
+            "uniprot_end": 73
+        },
+        {
+            "model_identifier": "PED00064",
+            "model_category": "CONFORMATIONAL ENSEMBLE",
+            "model_url": "https://proteinensemble.org/PED00064",
+            "provider": "PED",
+            "created": "2020-10-01",
+            "uniprot_start": 367,
+            "uniprot_end": 386
+        },
+        {
+            "model_identifier": "PED00037",
+            "model_category": "CONFORMATIONAL ENSEMBLE",
+            "model_url": "https://proteinensemble.org/PED00037",
+            "provider": "PED",
+            "created": "2020-10-01",
+            "uniprot_start": 1,
+            "uniprot_end": 61
+        },
+        {
+            "model_identifier": "PED00039",
+            "model_category": "CONFORMATIONAL ENSEMBLE",
+            "model_url": "https://proteinensemble.org/PED00039",
+            "provider": "PED",
+            "created": "2020-10-01",
+            "uniprot_start": 37,
+            "uniprot_end": 61
+        },
+        {
+            "model_identifier": "PED00063",
+            "model_category": "CONFORMATIONAL ENSEMBLE",
+            "model_url": "https://proteinensemble.org/PED00063",
+            "provider": "PED",
+            "created": "2020-10-01",
+            "uniprot_start": 367,
+            "uniprot_end": 388
+        },
+        {
+            "model_identifier": "PED00038",
+            "model_category": "CONFORMATIONAL ENSEMBLE",
+            "model_url": "https://proteinensemble.org/PED00038",
+            "provider": "PED",
+            "created": "2020-10-01",
+            "uniprot_start": 2,
+            "uniprot_end": 61
+        }
+    ]
+}

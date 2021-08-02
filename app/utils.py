@@ -4,7 +4,7 @@ import httpx
 
 from app import logger
 
-REQUEST_TIMEOUT = 30
+REQUEST_TIMEOUT = 5
 
 
 async def request_get(url: str):

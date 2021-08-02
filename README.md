@@ -1,8 +1,11 @@
+# 3D Beacons Hub API
 # Welcome to the 3D Beacons Hub API
 
 [![codecov](https://img.shields.io/codecov/c/github/3D-Beacons/3d-beacons-hub-api?style=for-the-badge)](https://codecov.io/gh/3D-Beacons/3d-beacons-hub-api)
 [![build](https://img.shields.io/github/workflow/status/3D-Beacons/3d-beacons-hub-api/Hub%20API%20CI?style=for-the-badge)](https://github.com/3D-Beacons/3d-beacons-hub-api/actions?query=workflow%3A%22Hub+API+CI%22)
 [![license](https://img.shields.io/github/license/3D-Beacons/3d-beacons-hub-api?style=for-the-badge)](https://raw.githubusercontent.com/3D-Beacons/3d-beacons-hub-api/master/LICENSE)
+
+3D Beacons Hub API is a programmatic way to obtain information of available experimental and theoretical models for a protein of interest.
 
 ## Background
 3D-Beacons is an open collaboration between providers of macromolecular structure models. The goal of this collaboration is to provide model coordinates and meta-information from all the contributing data resources in a standardized data format and on a unified platform.
@@ -23,6 +26,7 @@
 
 ## About the 3D-Beacons Hub API
 The 3D-Beacons Hub API is an integrator that makes API requests to Beacon APIs and collates, ranks and exposes data. The Hub API is using the [3D-Beacons Registry](https://github.com/3D-Beacons/3d-beacons-registry) to look up which Beacons support what API endpoint.
+
 
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
