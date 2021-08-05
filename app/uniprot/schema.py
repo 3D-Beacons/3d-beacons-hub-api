@@ -56,6 +56,7 @@ class Provider(Enum):
     FOLDX = "FOLDX"
     PED = "PED"
     ALPHAFOLD_DB = "AlphaFold DB"
+    SASBDB = "SASBDB"
 
 
 class ModelCategory(Enum):
@@ -64,6 +65,8 @@ class ModelCategory(Enum):
     TEMPLATE_FREE = "TEMPLATE-FREE"
     CONFORMATIONAL_ENSEMBLE = "CONFORMATIONAL ENSEMBLE"
     DEEP_LEARNING = "Deep learning"
+    ATOMIC = "ATOMIC"
+    DUMMY = "DUMMY"
 
 
 class Template(BaseModel):
