@@ -56,7 +56,6 @@ class Provider(Enum):
     FOLDX = "FOLDX"
     PED = "PED"
     ALPHAFOLD_DB = "AlphaFold DB"
-<<<<<<< HEAD
     SASBDB = "SASBDB"
 
 
@@ -66,8 +65,7 @@ class OligoState(Enum):
     HETERODIMER = "HETERODIMER"
     HOMO_OLIGOMER = "HOMO-OLIGOMER"
     HETERO_OLIGOMER = "HETERO-OLIGOMER"
-=======
->>>>>>> added support for AlphaFold prediction, reduced request timeout
+    SASBDB = "SASBDB"
 
 
 class ModelCategory(Enum):
@@ -75,7 +73,6 @@ class ModelCategory(Enum):
     TEMPLATE_BASED = "TEMPLATE-BASED"
     AB_INITIO = "AB-INITIO"
     CONFORMATIONAL_ENSEMBLE = "CONFORMATIONAL ENSEMBLE"
-<<<<<<< HEAD
     DEEP_LEARNING = "DEEP-LEARNING"
 
 
@@ -83,9 +80,7 @@ class ModelType(Enum):
     ATOMIC = "ATOMIC"
     DUMMY = "DUMMY"
     MIX = "MIX"
-=======
     DEEP_LEARNING = "Deep learning"
->>>>>>> added support for AlphaFold prediction, reduced request timeout
 
 
 class Template(BaseModel):
@@ -190,7 +185,6 @@ class StructureSummary(BaseModel):
     model_format: ModelFormat = Field(
         None, description="File format of the coordinates, e.g. PDB"
     )
-<<<<<<< HEAD
     experimental_method: ExperimentalMethod = Field(
         None, description="Experimental method used to determine the template"
     )
@@ -213,8 +207,6 @@ class StructureSummary(BaseModel):
     ensemble_sample_format: ModelFormat = Field(
         None, description="File format of the sample coordinates, e.g. PDB"
     )
-=======
->>>>>>> Added model_format to uniprot API specs
 
 
 class Structure(BaseModel):
