@@ -1,6 +1,7 @@
 import json
 
 import pytest
+
 from tests.utils import StubResponse
 
 from tests.utils import StubResponse
