@@ -27,15 +27,6 @@ jobs:
     - name: Run Tests
       run: |
         tox -e py3
-    - name: Format check
-      run: |
-        tox -e fmt-check
-    - name: Type check
-      run: |
-        tox -e mypy
-    - name: Style check
-      run: |
-        tox -e pep8
     - name: Upload coverage to Codecov
       if: github.ref == 'refs/heads/master'
       uses: codecov/codecov-action@v1

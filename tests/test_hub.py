@@ -1,7 +1,7 @@
 import asyncio
 
-from async_asgi_testclient import TestClient
 import pytest
+from async_asgi_testclient import TestClient
 from starlette import status
 
 from app.app import app
