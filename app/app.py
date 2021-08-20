@@ -7,7 +7,7 @@ from starlette.requests import Request
 
 from app.uniprot.uniprot import uniprot_route
 
-app = FastAPI()
+app = FastAPI(docs_url="/", redoc_url=None)
 app.include_router(uniprot_route, prefix="/uniprot")
 
 origins = ["*"]
