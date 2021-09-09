@@ -19,7 +19,7 @@ async def request_get(url: str):
     async with httpx.AsyncClient() as client:
         try:
             return await client.get(url, timeout=REQUEST_TIMEOUT)
-        except httpx.ReadTimeout:
+        except (httpx.ReadTimeout, httpx.ConnectTimeout):
             logger.info(f"Timeout for {url}")
 
 
