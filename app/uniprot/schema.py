@@ -50,21 +50,32 @@ class ExperimentalMethod(Enum):
 
 
 class Provider(Enum):
-    PDBE = "PDBE"
-    SWISSMODEL = "SWISSMODEL"
-    GENOME3D = "GENOME3D"
+    PDBE = "PDBe"
+    SWISS_MODEL = "SWISS-MODEL"
+    GENOME3D = "Genome3D"
     FOLDX = "FOLDX"
     PED = "PED"
     ALPHAFOLD_DB = "AlphaFold DB"
     SASBDB = "SASBDB"
 
 
+class OligoState(Enum):
+    MONOMER = "MONOMER"
+    HOMODIMER = "HOMODIMER"
+    HETERODIMER = "HETERODIMER"
+    HOMO_OLIGOMER = "HOMO-OLIGOMER"
+    HETERO_OLIGOMER = "HETERO-OLIGOMER"
+
+
 class ModelCategory(Enum):
     EXPERIMENTALLY_DETERMINED = "EXPERIMENTALLY DETERMINED"
     TEMPLATE_BASED = "TEMPLATE-BASED"
-    TEMPLATE_FREE = "TEMPLATE-FREE"
+    AB_INITIO = "AB-INITIO"
     CONFORMATIONAL_ENSEMBLE = "CONFORMATIONAL ENSEMBLE"
-    DEEP_LEARNING = "Deep learning"
+    DEEP_LEARNING = "DEEP-LEARNING"
+
+
+class ModelType(Enum):
     ATOMIC = "ATOMIC"
     DUMMY = "DUMMY"
 
@@ -84,7 +95,7 @@ class Template(BaseModel):
     )
     provider: str = Field(..., description="Provider of the template, e.g. PDBe")
     experimental_method: ExperimentalMethod = Field(
-        ..., description="Experimental method used to determine the template"
+        None, description="Experimental method used to determine the template"
     )
     resolution: float = Field(..., description="Resolution of the template")
     preferred_assembly_id: Optional[str] = Field(
@@ -161,15 +172,34 @@ class StructureSummary(BaseModel):
     coverage: Optional[float] = Field(
         None, description="Percentage of the UniProt sequence covered by the model"
     )
-    qmean_version: Optional[str] = Field(
+    confidence_version: Optional[str] = Field(
         None, description="Version of QMEAN used to calculate quality"
     )
-    qmean_avg_local_score: Optional[float] = Field(
+    confidence_avg_local_score: Optional[float] = Field(
         None, description="Average of the local QMEAN scores"
     )
     model_url: str = Field(..., description="URL of the model coordinates")
     model_format: ModelFormat = Field(
         None, description="File format of the coordinates, e.g. PDB"
+    )
+    experimental_method: ExperimentalMethod = Field(
+        None, description="Experimental method used to determine the template"
+    )
+    model_page_url: str = Field(
+        None,
+        description="URL of a web page of the data provider that show the model, "
+        "eg: https://alphafold.ebi.ac.uk/entry/Q5VSL9",
+    )
+    number_of_conformers: int = Field(
+        None,
+        description="The number of conformers in a conformational ensemble, eg: 42",
+    )
+    ensemble_sample_url: str = Field(
+        None,
+        description="URL of a sample of conformations from a conformational ensemble",
+    )
+    confidence_type: str = Field(
+        None, description="Type of the confidence measure, eg; QMEAN"
     )
 
 
@@ -199,8 +229,8 @@ class Structure(BaseModel):
         description="The index of the last residue of the model according to UniProt "
         "sequence numbering, e.g. 142",
     )
-    oligo_state: str = Field(
-        ..., description="Oligomeric state of the model, e.g. monomer"
+    oligo_state: OligoState = Field(
+        ..., description="Oligomeric state of the model, e.g. MONOMER"
     )
     preferred_assembly_id: Optional[str] = Field(
         None, description="Identifier of the preferred assembly in the model"
@@ -212,10 +242,10 @@ class Structure(BaseModel):
     coverage: Optional[float] = Field(
         None, description="Percentage of the UniProt sequence covered by the model"
     )
-    qmean_version: Optional[str] = Field(
+    confidence_version: Optional[str] = Field(
         None, description="Version of QMEAN used to calculate quality"
     )
-    qmean_avg_local_score: Optional[float] = Field(
+    confidence_avg_local_score: Optional[float] = Field(
         None, description="Average of the local QMEAN scores"
     )
     model_url: str = Field(..., description="URL of the model coordinates")

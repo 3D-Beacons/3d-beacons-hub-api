@@ -7,7 +7,14 @@ from starlette.requests import Request
 
 from app.uniprot.uniprot import uniprot_route
 
-app = FastAPI(docs_url="/", redoc_url=None)
+app = FastAPI(
+    docs_url="/",
+    title="3D Beacons HUB API",
+    description="The 3D-Beacons Network provides unified programmatic access to "
+    "experimentally determined and predicted structure models.",
+    redoc_url=None,
+    version=1.0,
+)
 app.include_router(uniprot_route, prefix="/uniprot")
 
 origins = ["*"]
