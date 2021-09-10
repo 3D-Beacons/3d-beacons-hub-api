@@ -78,6 +78,7 @@ class ModelCategory(Enum):
 class ModelType(Enum):
     ATOMIC = "ATOMIC"
     DUMMY = "DUMMY"
+    MIX = "MIX"
 
 
 class Template(BaseModel):
@@ -200,6 +201,9 @@ class StructureSummary(BaseModel):
     )
     confidence_type: str = Field(
         None, description="Type of the confidence measure, eg; QMEAN"
+    )
+    ensemble_sample_format: ModelFormat = Field(
+        None, description="File format of the sample coordinates, e.g. PDB"
     )
 
 
