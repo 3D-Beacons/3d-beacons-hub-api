@@ -47,7 +47,6 @@ class ExperimentalMethod(Enum):
     THEORETICAL_MODEL = "THEORETICAL MODEL"
     X_RAY_DIFFRACTION = "X-RAY DIFFRACTION"
     HYBRID = "HYBRID"
-    X_RAY_POWDER_DIFFRACTION = "X-RAY POWDER DIFFRACTION"
 
 
 class Provider(Enum):
@@ -66,6 +65,7 @@ class OligoState(Enum):
     HETERODIMER = "HETERODIMER"
     HOMO_OLIGOMER = "HOMO-OLIGOMER"
     HETERO_OLIGOMER = "HETERO-OLIGOMER"
+    SASBDB = "SASBDB"
 
 
 class ModelCategory(Enum):
