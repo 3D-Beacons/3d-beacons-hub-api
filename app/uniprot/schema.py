@@ -80,7 +80,6 @@ class ModelType(Enum):
     ATOMIC = "ATOMIC"
     DUMMY = "DUMMY"
     MIX = "MIX"
-    DEEP_LEARNING = "Deep learning"
 
 
 class Template(BaseModel):
