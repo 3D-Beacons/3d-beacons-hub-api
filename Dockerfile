@@ -1,7 +1,7 @@
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7-alpine3.8
 LABEL maintainer="Sreenath Sasidharan Nair sreenath@ebi.ac.uk"
 
-RUN apk add git
+RUN apk add git gcc
 
 ADD requirements.txt /app/
 ADD logging.conf /app/
