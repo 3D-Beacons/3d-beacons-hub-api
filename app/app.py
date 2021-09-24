@@ -47,7 +47,7 @@ instrumentator.add(
     )
 )
 instrumentator.instrument(app)
-instrumentator.expose(app, include_in_schema=False, should_gzip=True)
+instrumentator.expose(app, include_in_schema=False, should_gzip=False)
 
 
 @app.middleware("http")
