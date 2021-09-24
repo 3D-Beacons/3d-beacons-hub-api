@@ -4,8 +4,6 @@ import pytest
 
 from tests.utils import StubResponse
 
-from tests.utils import StubResponse
-
 
 @pytest.fixture(scope="session")
 def invalid_uniprot():
