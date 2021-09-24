@@ -3,9 +3,18 @@ import time
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator, metrics
 from starlette.requests import Request
 
 from app.uniprot.uniprot import uniprot_route
+
+instrumentator = Instrumentator(
+    should_group_status_codes=True,
+    should_ignore_untemplated=True,
+    should_respect_env_var=False,
+    excluded_handlers=[".*admin.*", "/metrics"],
+    env_var_name="ENABLE_METRICS",
+)
 
 app = FastAPI(
     docs_url="/",
@@ -27,6 +36,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.add_middleware(GZipMiddleware)
+
+instrumentator.add(
+    metrics.latency(
+        buckets=(
+            1,
+            2,
+            3,
+        )
+    )
+)
+instrumentator.instrument(app)
+instrumentator.expose(app, include_in_schema=False, should_gzip=True)
 
 
 @app.middleware("http")

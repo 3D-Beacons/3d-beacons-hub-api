@@ -4,3 +4,4 @@ uvicorn==0.11.8
 httpx==0.14.3
 click==7.1.2
 requests==2.24.0
+prometheus-fastapi-instrumentator==5.3.0
