@@ -85,51 +85,22 @@ docker build -t 3dbeacons-hub-api .
 docker run -p 8000:8000 3dbeacons-hub-api
 ```
 
-## Testing
+### Unit Testing
 
-Automated testing is performed using [tox](https://tox.readthedocs.io/en/latest/index.html). tox will automatically create virtual environments based on tox.ini for unit testing and PEP8 style guide checking.
+Unit testing is performed with [pytest](https://pytest.org/).
 
-```
-# Run all environments.
-#   To only run a single environment, specify it like: -e pep8
-(venv) $ tox
-```
+pytest will automatically discover and run tests by recursively searching for folders and `.py` files prefixed with `test` for any functions prefixed by `test`.
 
-### Unit testing
 
-This project uses [pytest](https://pytest.org/) for unit testing. Code coverage is provided by [pytest-cov](https://pytest-cov.readthedocs.io/en/latest/) plugin.
+Code coverage is provided by the [pytest-cov](https://pytest-cov.readthedocs.io/en/latest/) plugin.
 
-When running a unit test tox environment (e.g. ```tox```, ```tox -e py37```, etc.), a data file (e.g. ```.coverage.py37```) containing the coverage data is generated. This file is not readable on its own, but when the coverage tox environment is run (e.g. ```tox``` or ```tox -e -coverage```), coverage from all unit test environments is combined into a single data file and an HTML report is generated in the htmlcov folder showing each source file and which lines were executed during unit testing. Open ```htmlcov/index.html``` in a web browser to view the report. Code coverage reports help identify areas of the project that are currently not tested.
+Code coverage is configured in `pyproject.toml`.
 
-Code coverage is configured in ```pyproject.toml```.
+### Workflow automation using pre-commit hooks ###
 
-To pass arguments to pytest through tox:
+Code formatting and PEP8 compliance are automated using [pre-commit](https://pre-commit.com/) hooks. This is configured in `.pre-commit-config.yaml` which will run these hooks before `commit` ting anything to the repository.
 
-```
-(venv) $ tox -e py37 -- -k main
-```
-
-### Code style checking
-This project uses [PEP8](https://www.python.org/dev/peps/pep-0008/) for style guide and uses [flake8](http://flake8.pycqa.org/) for code compliance. flake8 is configured in ```[flake8]``` section of ```tox.ini```.
-
-### Automated code formatting
-Code is automatically formatted using [black](https://github.com/psf/black). Imports are automatically sorted and grouped using [isort](https://github.com/timothycrosley/isort/).
-
-They are configured in ```pyproject.toml```. Please note to prefix ```tool.``` for all these configurations in ```pyproject.toml```.
-
-Format the code using:
-```
-(venv) $ tox -e fmt
-```
-
-Verify if the code is properly formatted (in a CI job):
-
-```
-(venv) $ tox -e fmt-check
-```
-
-### Type checking
-Type checking is performed by [mypy](https://mypy.readthedocs.io/en/stable/index.html#). Use ```tox -e mypy```. This is configured in ```mypy.ini```.
+Please note that this is already installed via dev-requirements.txt.
 
 ## Contributors
 - Sreenath Nair - _Initial work_ - [sreenathnair](https://github.com/sreenathnair)

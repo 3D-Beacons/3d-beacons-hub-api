@@ -1,37 +1,84 @@
 {
     "providers": [
         {
-            "providerId": "provider1",
-            "providerName": "Provider1",
-            "providerDescription": "Description for provider1",
-            "providerUrl": "https://provider1.org/",
-            "baseServiceUrl": "https://provider1.org/",
-            "providerLogo": "https://provider1.org/logo.png"
+            "providerId": "swissmodel",
+            "providerName": "SWISS-MODEL",
+            "providerDescription": "SWISS-MODEL is a fully automated protein structure homology-modelling server, accessible via the ExPASy web server, or from the program DeepView (Swiss Pdb-Viewer). The purpose of this server is to make protein modelling accessible to all life science researchers worldwide.",
+            "providerUrl": "https://swissmodel.expasy.org/",
+            "baseServiceUrl": "https://swissmodel.expasy.org/3d-beacons/",
+            "providerLogo": "https://swissmodel.expasy.org"
         },
         {
-            "providerId": "provider2",
-            "providerName": "Provider2",
-            "providerDescription": "Description for provider2",
-            "providerUrl": "https://provider2.org/",
-            "baseServiceUrl": "https://provider2.org/",
-            "providerLogo": "https://provider2.org/logo.png"
+            "providerId": "genome3d",
+            "providerName": "Genome-3D",
+            "providerDescription": "Genome3D provides consensus structural annotations and 3D models for sequences from model organisms, including human.",
+            "providerUrl": "http://genome3d.eu/",
+            "baseServiceUrl": "http://genome3d.eu/beacons/",
+            "providerLogo": "http://genome3d.eu/"
+        },
+        {
+            "providerId": "pdbe",
+            "providerName": "Protein Data Bank in Europe",
+            "providerDescription": "PDBe is the European resource for the collection, organisation and dissemination of data on biological macromolecular structures.",
+            "providerUrl": "https://www.ebi.ac.uk/pdbe/",
+            "baseServiceUrl": "https://www.ebi.ac.uk/pdbe/aggregated-api/beacons/",
+            "providerLogo": "https://www.ebi.ac.uk/pdbe/static/images/logos/PDBe/logo.png"
+        },
+        {
+            "providerId": "ped",
+            "providerName": "Protein Ensemble Database",
+            "providerDescription": "The Protein Ensemble Database (PED) is an open access database for the deposition of structural ensembles, mainly intrinsically disordered proteins (IDPs).",
+            "providerUrl": "https://proteinensemble.org/",
+            "baseServiceUrl": "https://proteinensemble.org/api/3d-beacons/",
+            "providerLogo": "https://proteinensemble.org/assets/PED_logo.svg"
+        },
+        {
+            "providerId": "alphafold",
+            "providerName": "AlphaFold Protein Structure Database",
+            "providerDescription": "AlphaFold is an AI system developed by DeepMind that predicts a protein’s 3D structure from its amino acid sequence. It regularly achieves accuracy competitive with experiment.",
+            "providerUrl": "https://alphafold.ebi.ac.uk/",
+            "baseServiceUrl": "https://alphafold.ebi.ac.uk/api/",
+            "providerLogo": "https://alphafold.ebi.ac.uk/assets/img/dm-logo.png"
+        },
+        {
+            "providerId": "sasbdb",
+            "providerName": "Small Angle Scattering Biological Data Bank",
+            "providerDescription": "Small angle scattering (SAS) of X-ray and neutrons provides structural information on biological macromolecules in solution at a resolution of 1-2 nm. SASBDB is a fully searchable curated repository of freely accessible and downloadable experimental data, which are deposited together with the relevant experimental conditions, sample details, derived models and their fits to the data.",
+            "providerUrl": "https://www.sasbdb.org/",
+            "baseServiceUrl": "https://www.sasbdb.org/rest-api/",
+            "providerLogo": "https://www.sasbdb.org/media/sasbdb-logo.png"
         }
     ],
     "services": [
         {
-            "serviceType": "service1",
-            "provider": "provider1",
-            "accessPoint": "service1/"
+            "serviceType": "uniprot",
+            "provider": "swissmodel",
+            "accessPoint": "uniprot/"
         },
         {
-            "serviceType": "service1",
-            "provider": "provider2",
-            "accessPoint": "service1/"
+            "serviceType": "summary",
+            "provider": "pdbe",
+            "accessPoint": "uniprot/summary/"
         },
         {
-            "serviceType": "service2",
-            "provider": "provider2",
-            "accessPoint": "service2/"
+            "serviceType": "summary",
+            "provider": "ped",
+            "accessPoint": "uniprot/summary/"
+        },
+        {
+            "serviceType": "summary",
+            "provider": "swissmodel",
+            "accessPoint": "uniprot/summary/"
+        },
+        {
+            "serviceType": "summary",
+            "provider": "alphafold",
+            "accessPoint": "uniprot/summary/"
+        },
+        {
+            "serviceType": "summary",
+            "provider": "sasbdb",
+            "accessPoint": "3dbeacon/uniprot/"
         }
     ]
 }

@@ -40,6 +40,9 @@ async def get_uniprot_summary(
         pattern="^[0-9]+-[0-9]+$",
         alias="range",
     ),
+    exclude_provider: Optional[str] = Query(
+        None, description="Provider to exclude. eg: pdbe"
+    ),
 ):
     f"""Returns summary of experimental and theoretical models for a UniProt
     accession or entry name
@@ -49,6 +52,7 @@ async def get_uniprot_summary(
         provider (str, optional): Data provider
         template (str, optional): {TEMPLATE_DESC}
         res_range (str, optional): Residue range
+        exclude_provider (str, optional): Provider to exclude
 
     Returns:
         Result: A Result summary object with experimental and theoretical models.
@@ -61,7 +65,12 @@ async def get_uniprot_summary(
         template = template.strip(" ")
     if res_range:
         res_range = res_range.strip(" ")
-    services = get_services(service_type="summary", provider=provider)
+    if exclude_provider:
+        exclude_provider = exclude_provider.strip(" ")
+
+    services = get_services(
+        service_type="summary", provider=provider, exclude_provider=exclude_provider
+    )
     calls = []
     for service in services:
         base_url = get_base_service_url(service["provider"])
