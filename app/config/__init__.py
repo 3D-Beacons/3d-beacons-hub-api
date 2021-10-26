@@ -39,13 +39,15 @@ def read_data_file(filename):
     return data
 
 
-def get_services(service_type: str = None, provider: Query = None):
+def get_services(
+    service_type: str = None, provider: Query = None, exclude_provider: Query = None
+):
     """Returns a list of services available.
 
     Args:
         service_type (str, optional): A type of service.
         provider (Query, optional): A provider.
-
+        exclude_provider (Query, optional): Provider to exclude.
     Returns:
         list: A list of services based on the parameters passed.
     """
@@ -54,7 +56,7 @@ def get_services(service_type: str = None, provider: Query = None):
     results = []
 
     # assuming all services to be returned when no service_type and provider is passed
-    if not service_type and not provider:
+    if not service_type and not provider and not exclude_provider:
         return data["services"]
 
     # filter services for a service type
@@ -70,6 +72,11 @@ def get_services(service_type: str = None, provider: Query = None):
     if provider:
         results = list(
             filter(lambda x: x["provider"] == provider, [x for x in results])
+        )
+
+    if exclude_provider:
+        results = list(
+            filter(lambda x: x["provider"] != exclude_provider, [x for x in results])
         )
 
     return results
