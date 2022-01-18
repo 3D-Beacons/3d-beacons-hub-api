@@ -57,6 +57,7 @@ class Provider(Enum):
     PED = "PED"
     ALPHAFOLD_DB = "AlphaFold DB"
     SASBDB = "SASBDB"
+    ALPHAFILL = "AlphaFill"
 
 
 class OligoState(Enum):
