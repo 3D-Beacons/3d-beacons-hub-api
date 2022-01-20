@@ -6,6 +6,7 @@
             "providerDescription": "SWISS-MODEL is a fully automated protein structure homology-modelling server, accessible via the ExPASy web server, or from the program DeepView (Swiss Pdb-Viewer). The purpose of this server is to make protein modelling accessible to all life science researchers worldwide.",
             "providerUrl": "https://swissmodel.expasy.org/",
             "baseServiceUrl": "https://swissmodel.expasy.org/3d-beacons/",
+            "devBaseServiceUrl": "https://swissmodel.expasy.org/3d-beacons/",
             "providerLogo": "https://swissmodel.expasy.org"
         },
         {
@@ -14,6 +15,7 @@
             "providerDescription": "Genome3D provides consensus structural annotations and 3D models for sequences from model organisms, including human.",
             "providerUrl": "http://genome3d.eu/",
             "baseServiceUrl": "http://genome3d.eu/beacons/",
+            "devBaseServiceUrl": "http://genome3d.eu/beacons/",
             "providerLogo": "http://genome3d.eu/"
         },
         {
@@ -22,6 +24,7 @@
             "providerDescription": "PDBe is the European resource for the collection, organisation and dissemination of data on biological macromolecular structures.",
             "providerUrl": "https://www.ebi.ac.uk/pdbe/",
             "baseServiceUrl": "https://www.ebi.ac.uk/pdbe/aggregated-api/beacons/",
+            "devBaseServiceUrl": "https://wwwdev.ebi.ac.uk/pdbe/aggregated-api/beacons/",
             "providerLogo": "https://www.ebi.ac.uk/pdbe/static/images/logos/PDBe/logo.png"
         },
         {
@@ -30,6 +33,7 @@
             "providerDescription": "The Protein Ensemble Database (PED) is an open access database for the deposition of structural ensembles, mainly intrinsically disordered proteins (IDPs).",
             "providerUrl": "https://proteinensemble.org/",
             "baseServiceUrl": "https://proteinensemble.org/api/3d-beacons/",
+            "devBaseServiceUrl": "https://proteinensemble.org/api/3d-beacons/",
             "providerLogo": "https://proteinensemble.org/assets/PED_logo.svg"
         },
         {
@@ -38,6 +42,7 @@
             "providerDescription": "AlphaFold is an AI system developed by DeepMind that predicts a protein’s 3D structure from its amino acid sequence. It regularly achieves accuracy competitive with experiment.",
             "providerUrl": "https://alphafold.ebi.ac.uk/",
             "baseServiceUrl": "https://alphafold.ebi.ac.uk/api/",
+            "devBaseServiceUrl": "https://dev.alphafold.ebi.ac.uk/api/",
             "providerLogo": "https://alphafold.ebi.ac.uk/assets/img/dm-logo.png"
         },
         {
@@ -46,7 +51,17 @@
             "providerDescription": "Small angle scattering (SAS) of X-ray and neutrons provides structural information on biological macromolecules in solution at a resolution of 1-2 nm. SASBDB is a fully searchable curated repository of freely accessible and downloadable experimental data, which are deposited together with the relevant experimental conditions, sample details, derived models and their fits to the data.",
             "providerUrl": "https://www.sasbdb.org/",
             "baseServiceUrl": "https://www.sasbdb.org/rest-api/",
+            "devBaseServiceUrl": "https://www.sasbdb.org/rest-api/",
             "providerLogo": "https://www.sasbdb.org/media/sasbdb-logo.png"
+        },
+        {
+            "providerId": "alphafill",
+            "providerName": "AlphaFill Model Data Bank",
+            "providerDescription": "AlphaFill is a databank of AlphaFold models enriched with ligands, cofactors, and ions that are transplanyed from homologous experimental structure models.",
+            "providerUrl": "https://alphafill.eu/",
+            "baseServiceUrl": "https://alphafill.eu/v1/aff/",
+            "devBaseServiceUrl": "https://alphafill.eu/v1/aff/",
+            "providerLogo": "https://alphafill.eu/images/alphafill-logo.svg"
         }
     ],
     "services": [
@@ -79,6 +94,11 @@
             "serviceType": "summary",
             "provider": "sasbdb",
             "accessPoint": "3dbeacon/uniprot/"
+        },
+        {
+            "serviceType": "summary",
+            "provider": "alphafill",
+            "accessPoint": "3d-beacon/"
         }
     ]
 }
