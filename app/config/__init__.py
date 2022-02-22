@@ -9,6 +9,8 @@ from app import logger
 DATA_FILE = "data.json"
 ENV = os.getenv("ENVIRONMENT", "DEV")
 
+logger.debug(f"Environment is {ENV}")
+
 
 @lru_cache(maxsize=None)
 def read_data_file(filename):

@@ -7,13 +7,7 @@ from starlette.responses import JSONResponse
 
 from app.config import get_base_service_url, get_services
 from app.constants import TEMPLATE_DESC, UNIPROT_QUAL_DESC
-from app.uniprot.schema import (
-    Result,
-    ResultSummary,
-    Structure,
-    StructureSummary,
-    UniProtEntry,
-)
+from app.uniprot.schema import Result, Structure, UniProtEntry
 from app.utils import send_async_requests
 
 uniprot_route = APIRouter()
@@ -22,7 +16,7 @@ uniprot_route = APIRouter()
 @uniprot_route.get(
     "/summary/{qualifier}.json",
     status_code=status.HTTP_200_OK,
-    response_model=ResultSummary,
+    response_model=Result,
     response_model_exclude_unset=True,
 )
 async def get_uniprot_summary(
@@ -87,7 +81,7 @@ async def get_uniprot_summary(
     if not final_result:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
 
-    final_structures: List[StructureSummary] = []
+    final_structures: List[Structure] = []
     uniprot_entry: UniProtEntry = UniProtEntry(**final_result[0]["uniprot_entry"])
 
     for item in final_result:
@@ -96,7 +90,7 @@ async def get_uniprot_summary(
     if not final_structures:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
 
-    api_result: ResultSummary = ResultSummary(
+    api_result: Result = Result(
         **{"uniprot_entry": uniprot_entry, "structures": final_structures}
     )
 
