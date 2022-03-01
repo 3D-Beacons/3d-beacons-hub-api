@@ -159,10 +159,13 @@ class Chain(BaseModel):
 
 
 class EntityType(Enum):
-    MACROMOLECULE = "MACROMOLECULE"
     LIGAND = "LIGAND"
     NON_POLYMER = "NON-POLYMER"
     MACROLIDE = "MACROLIDE"
+    PROTEIN = "PROTEIN"
+    DNA = "DNA"
+    RNA = "RNA"
+    BRANCHED = "BRANCHED"
 
 
 class IdentifierCategory(Enum):
