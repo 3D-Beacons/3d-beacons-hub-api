@@ -166,6 +166,7 @@ class EntityType(Enum):
     DNA = "DNA"
     RNA = "RNA"
     BRANCHED = "BRANCHED"
+    DNA_RNA_HYBRID = "DNA/RNA HYBRID"
 
 
 class IdentifierCategory(Enum):
@@ -179,9 +180,9 @@ class IdentifierCategory(Enum):
 
 class Entity(BaseModel):
     entity_type: EntityType = Field(..., description="The type of the molecular entity")
-    identifier: str = Field(..., description="Identifier of the molecule")
-    identifier_category: IdentifierCategory = Field(
-        ..., description="Category of the identifier"
+    identifier: Optional[str] = Field(None, description="Identifier of the molecule")
+    identifier_category: Optional[IdentifierCategory] = Field(
+        None, description="Category of the identifier"
     )
     description: str = Field(..., description="A textual label of the molecule")
     chain_ids: List[str] = Field(
