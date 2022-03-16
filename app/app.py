@@ -7,6 +7,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from starlette.requests import Request
 
 from app.uniprot.uniprot import uniprot_route
+from app.version import __version__ as schema_version
 
 instrumentator = Instrumentator(
     should_group_status_codes=True,
@@ -22,7 +23,7 @@ app = FastAPI(
     description="The 3D-Beacons Network provides unified programmatic access to "
     "experimentally determined and predicted structure models.",
     redoc_url=None,
-    version=1.0,
+    version=schema_version,
 )
 app.include_router(uniprot_route, prefix="/uniprot")
 
@@ -42,11 +43,12 @@ instrumentator.expose(app, include_in_schema=False, should_gzip=False)
 
 
 @app.middleware("http")
-async def add_process_time_header(request: Request, call_next):
+async def add_extra_headers(request: Request, call_next):
     start_time = time.time()
     response = await call_next(request)
     process_time = time.time() - start_time
     response.headers["X-Process-Time"] = str(process_time)
+    response.headers["X-3DBeacons-API-Version"] = schema_version
     return response
 
 
