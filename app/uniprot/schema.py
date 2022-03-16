@@ -159,14 +159,11 @@ class Chain(BaseModel):
 
 
 class EntityType(Enum):
-    LIGAND = "LIGAND"
     NON_POLYMER = "NON-POLYMER"
     MACROLIDE = "MACROLIDE"
-    PROTEIN = "PROTEIN"
-    DNA = "DNA"
-    RNA = "RNA"
+    POLYMER = "POLYMER"
     BRANCHED = "BRANCHED"
-    DNA_RNA_HYBRID = "DNA/RNA HYBRID"
+    WATER = "WATER"
 
 
 class IdentifierCategory(Enum):
@@ -178,8 +175,24 @@ class IdentifierCategory(Enum):
     INCHIKEY = "INCHIKEY"
 
 
+class EntityPolyType(Enum):
+    CYCLIC_PSEUDO_PEPTIDE = "CYCLIC-PSEUDO-PEPTIDE"
+    PEPTIDE_NUCLEIC_ACID = "PEPTIDE NUCLEIC ACID"
+    POLYDEOXYRIBONUCLEOTIDE = "POLYDEOXYRIBONUCLEOTIDE"
+    DNA_RNA_HYBRID = "POLYDEOXYRIBONUCLEOTIDE/POLYRIBONUCLEOTIDE HYBRID"
+    POLYPEPTIDE_D = "POLYPEPTIDE(D)"
+    POLYPEPTIDE_L = "POLYPEPTIDE(L)"
+    POLYRIBONUCLEOTIDE = "POLYRIBONUCLEOTIDE"
+    OTHER = "OTHER"
+
+
 class Entity(BaseModel):
     entity_type: EntityType = Field(..., description="The type of the molecular entity")
+    entity_poly_type: Optional[EntityPolyType] = Field(
+        None,
+        description="The type of the molecular entity; similar to _entity_poly.type"
+        " in mmCIF",
+    )
     identifier: Optional[str] = Field(None, description="Identifier of the molecule")
     identifier_category: Optional[IdentifierCategory] = Field(
         None, description="Category of the identifier"
@@ -275,7 +288,7 @@ class Structure(BaseModel):
     preferred_assembly_id: Optional[str] = Field(
         None, description="Identifier of the preferred assembly in the model"
     )
-    entities: Optional[List[Entity]]
+    entities: List[Entity]
     chains: Optional[List[Chain]]
 
 
