@@ -66,7 +66,7 @@ class Provider(Enum):
     ALPHAFOLD_DB = "AlphaFold DB"
     SASBDB = "SASBDB"
     ALPHAFILL = "AlphaFill"
-    MODELARCHIVE = "Model Archive"
+    MODELARCHIVE = "ModelArchive"
 
 
 class OligoState(Enum):
