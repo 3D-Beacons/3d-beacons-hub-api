@@ -31,7 +31,7 @@ jobs:
       if: github.ref == 'refs/heads/master'
       uses: codecov/codecov-action@v1
       with:
-        file: ./coverage.xml
+        file: ./coverage/cobertura-coverage.xml
         flags: unittests
         name: codecov-beacons-hub-api
         fail_ci_if_error: true
