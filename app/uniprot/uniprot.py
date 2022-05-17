@@ -102,6 +102,8 @@ async def get_uniprot_summary(
             logger.debug(
                 f"Invalid response from provider {provider} for entry {qualifier}"
             )
+        except Exception:
+            final_structures = None
 
     if not final_structures:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
@@ -185,6 +187,9 @@ async def get_uniprot(
             logger.debug(
                 f"Invalid response from provider {provider} for entry {qualifier}"
             )
+        except Exception:
+            final_structures = None
+
     if not final_structures:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
 
