@@ -3,6 +3,7 @@ import asyncio
 import httpx
 
 from app import logger
+from app.version import __version__
 
 REQUEST_TIMEOUT = 5
 
@@ -26,3 +27,9 @@ async def request_get(url: str):
 async def send_async_requests(endpoints):
     tasks = [asyncio.create_task(request_get(call)) for call in endpoints]
     return await asyncio.gather(*tasks)
+
+
+def get_final_service_url(*parts):
+    """Returns a final service URL."""
+
+    return "/".join(parts) + f"?version={__version__}"

@@ -16,7 +16,7 @@ from app.uniprot.schema import (
     UniprotEntry,
     UniprotSummary,
 )
-from app.utils import send_async_requests
+from app.utils import get_final_service_url, send_async_requests
 
 uniprot_route = APIRouter()
 
@@ -76,10 +76,12 @@ async def get_uniprot_summary(
     calls = []
     for service in services:
         base_url = get_base_service_url(service["provider"])
-        final_url = base_url + service["accessPoint"] + f"{qualifier}.json?"
+        final_url = get_final_service_url(
+            base_url, service["accessPoint"], f"{qualifier}.json"
+        )
 
         if res_range:
-            final_url = f"{final_url}range={res_range}"
+            final_url = f"{final_url}&range={res_range}"
 
         calls.append(final_url)
 
@@ -160,10 +162,12 @@ async def get_uniprot(
     calls = []
     for service in services:
         base_url = get_base_service_url(service["provider"])
-        final_url = base_url + service["accessPoint"] + f"{qualifier}.json?"
+        final_url = get_final_service_url(
+            base_url, service["accessPoint"], f"{qualifier}.json"
+        )
 
         if res_range:
-            final_url = f"{final_url}range={res_range}"
+            final_url = f"{final_url}&range={res_range}"
 
         calls.append(final_url)
 
