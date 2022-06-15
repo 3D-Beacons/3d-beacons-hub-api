@@ -67,6 +67,7 @@ class Provider(Enum):
     SASBDB = "SASBDB"
     ALPHAFILL = "AlphaFill"
     MODELARCHIVE = "ModelArchive"
+    HEGELAB = "HEGELAB"
 
 
 class OligoState(Enum):
