@@ -1,7 +1,8 @@
 trigger_pipeline:
   stage: deploy
   script:
-    - 'curl --fail --request POST --form token=$TRIGGER_TOKEN --form ref=$CI_COMMIT_TAG "$TRIGGER_URL"'
+    - env
+    - 'curl --fail --request POST --form token=$TRIGGER_TOKEN --form ref=refs/tags/$CI_COMMIT_TAG "$TRIGGER_URL"'
   rules:
     - if: $CI_COMMIT_TAG
   tags:
