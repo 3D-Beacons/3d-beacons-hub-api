@@ -4,3 +4,5 @@ trigger_pipeline:
     - 'curl --fail --request POST --form token=$TRIGGER_TOKEN --form ref=$CI_COMMIT_TAG "$TRIGGER_URL"'
   rules:
     - if: $CI_COMMIT_TAG
+  tags:
+    - kb-runner
