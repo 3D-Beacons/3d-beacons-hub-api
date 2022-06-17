@@ -7,6 +7,9 @@ from fastapi.params import Query
 from app import logger
 
 DATA_FILE = "data.json"
+ENV = os.getenv("ENVIRONMENT", "DEV")
+
+logger.debug(f"Environment is {ENV}")
 
 
 @lru_cache(maxsize=None)
@@ -91,10 +94,13 @@ def get_providers():
 
 
 def get_base_service_url(provider: str) -> str:
+    url_key = "baseServiceUrl"
+
+    if ENV == "DEV":
+        url_key = "devBaseServiceUrl"
+
     providers = get_providers()
-    return list(filter(lambda x: x["providerId"] == provider, providers))[0][
-        "baseServiceUrl"
-    ]
+    return list(filter(lambda x: x["providerId"] == provider, providers))[0][url_key]
 
 
 @lru_cache(maxsize=None)

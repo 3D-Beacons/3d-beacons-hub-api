@@ -1,20 +1,16 @@
 from typing import Any, List, Optional
 
+import pydantic
 from fastapi.params import Path, Query
 from fastapi.routing import APIRouter
 from starlette import status
 from starlette.responses import JSONResponse
 
+from app import logger
 from app.config import get_base_service_url, get_services
 from app.constants import TEMPLATE_DESC, UNIPROT_QUAL_DESC
-from app.uniprot.schema import (
-    Result,
-    ResultSummary,
-    Structure,
-    StructureSummary,
-    UniProtEntry,
-)
-from app.utils import send_async_requests
+from app.uniprot.schema import Result, Structure, UniProtEntry
+from app.utils import get_final_service_url, send_async_requests
 
 uniprot_route = APIRouter()
 
@@ -22,7 +18,7 @@ uniprot_route = APIRouter()
 @uniprot_route.get(
     "/summary/{qualifier}.json",
     status_code=status.HTTP_200_OK,
-    response_model=ResultSummary,
+    response_model=Result,
     response_model_exclude_unset=True,
 )
 async def get_uniprot_summary(
@@ -74,7 +70,9 @@ async def get_uniprot_summary(
     calls = []
     for service in services:
         base_url = get_base_service_url(service["provider"])
-        final_url = base_url + service["accessPoint"] + f"{qualifier}.json?"
+        final_url = get_final_service_url(
+            base_url, service["accessPoint"], f"{qualifier}.json"
+        )
 
         if res_range:
             final_url = f"{final_url}range={res_range}"
@@ -84,19 +82,32 @@ async def get_uniprot_summary(
     result = await send_async_requests(calls)
     final_result = [x.json() for x in result if x and x.status_code == 200]
 
+    # filter out error message responses, some of them comes with status code 200
+    final_result = [x for x in final_result if not x.get("error")]
+
     if not final_result:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
 
-    final_structures: List[StructureSummary] = []
+    final_structures: List[Structure] = []
     uniprot_entry: UniProtEntry = UniProtEntry(**final_result[0]["uniprot_entry"])
 
     for item in final_result:
-        final_structures.extend(item["structures"])
+        # Remove erroneous responses
+        try:
+            Structure(**item["structures"][0])
+            final_structures.extend(item["structures"])
+        except pydantic.error_wrappers.ValidationError:
+            provider = item["structures"][0]["provider"]
+            logger.debug(
+                f"Invalid response from provider {provider} for entry {qualifier}"
+            )
+        except Exception:
+            final_structures = None
 
     if not final_structures:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
 
-    api_result: ResultSummary = ResultSummary(
+    api_result: Result = Result(
         **{"uniprot_entry": uniprot_entry, "structures": final_structures}
     )
 
@@ -159,6 +170,9 @@ async def get_uniprot(
     result = await send_async_requests(calls)
     final_result = [x.json() for x in result if x and x.status_code == 200]
 
+    # filter out error message responses, some of them comes with status code 200
+    final_result = [x for x in final_result if not x.get("error")]
+
     if not final_result:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
 
@@ -166,7 +180,17 @@ async def get_uniprot(
     uniprot_entry: UniProtEntry = UniProtEntry(**final_result[0]["uniprot_entry"])
 
     for item in final_result:
-        final_structures.extend(item["structures"])
+        # Remove erroneous responses
+        try:
+            Structure(**item["structures"][0])
+            final_structures.extend(item["structures"])
+        except pydantic.error_wrappers.ValidationError:
+            provider = item["structures"][0]["provider"]
+            logger.debug(
+                f"Invalid response from provider {provider} for entry {qualifier}"
+            )
+        except Exception:
+            final_structures = None
 
     api_result: Result = Result(
         **{"uniprot_entry": uniprot_entry, "structures": final_structures}

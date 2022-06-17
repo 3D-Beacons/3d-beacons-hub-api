@@ -23,6 +23,14 @@ class UniProtEntry(BaseModel):
     )
     ac: str = Field(..., description=UNIPROT_AC_DESC)
     id: Optional[str] = Field(None, description=UNIPROT_ID_DESC)
+    segment_start: Optional[int] = Field(
+        None,
+        description="1-indexed first residue of the UniProt sequence segment",
+    )
+    segment_end: Optional[int] = Field(
+        None,
+        description="1-indexed last residue of the UniProt sequence segment",
+    )
 
 
 class InComplexWithItem(BaseModel):
@@ -53,7 +61,7 @@ class Provider(Enum):
     PDBE = "PDBe"
     SWISS_MODEL = "SWISS-MODEL"
     GENOME3D = "Genome3D"
-    FOLDX = "FOLDX"
+    FOLDX = "FoldX"
     PED = "PED"
     ALPHAFOLD_DB = "AlphaFold DB"
     SASBDB = "SASBDB"
@@ -85,6 +93,11 @@ class ModelType(Enum):
     MIX = "MIX"
 
 
+class ConfidenceType(Enum):
+    PLDDT = "pLDDT"
+    QMEANDISCO = "QMEANDisCo"
+
+
 class Template(BaseModel):
     template_id: str = Field(
         ..., description="Identifier of the templates, e.g. PDB id"
@@ -100,7 +113,7 @@ class Template(BaseModel):
     )
     provider: str = Field(..., description="Provider of the template, e.g. PDBe")
     experimental_method: ExperimentalMethod = Field(
-        None, description="Experimental method used to determine the template"
+        ..., description="Experimental method used to determine the template"
     )
     resolution: float = Field(..., description="Resolution of the template")
     preferred_assembly_id: Optional[str] = Field(
@@ -125,7 +138,9 @@ class UniProt(BaseModel):
 
 
 class Residue(BaseModel):
-    qmean: Optional[float] = Field(None, description="QMEAN score")
+    confidence: Optional[float] = Field(
+        None, description="Confidence score in the range of [0,1]"
+    )
     model_residue_label: str = Field(..., description="Model residue index")
     uniprot_residue_number: int = Field(..., description="UniProt residue index")
 
@@ -144,70 +159,48 @@ class Chain(BaseModel):
     segments: Optional[List[Segment]] = None
 
 
-class StructureSummary(BaseModel):
-    model_identifier: str = Field(
-        ..., description="Identifier of the model, e.g. a PDB id"
-    )
-    model_category: ModelCategory = Field(
-        ..., description="Category of the model, e.g. EXPERIMENTALLY DETERMINED"
-    )
-    provider: Provider = Field(..., description="Name of the model provider")
-    created: str = Field(
-        ...,
-        regex="^[1-2][9|0][0-9]{2}-[0-1][0-9]-[0-3][0-9]$",
-        description="Date of release of model generation in the format of YYYY-MM-DD",
-    )
-    sequence_identity: Optional[float] = Field(
-        None, description="Sequence identity of the model to the UniProt sequence"
-    )
-    uniprot_start: Optional[int] = Field(
+class EntityType(Enum):
+    NON_POLYMER = "NON-POLYMER"
+    MACROLIDE = "MACROLIDE"
+    POLYMER = "POLYMER"
+    BRANCHED = "BRANCHED"
+    WATER = "WATER"
+
+
+class IdentifierCategory(Enum):
+    UNIPROT = "UNIPROT"
+    RFAM = "RFAM"
+    CCD = "CCD"
+    SMILES = "SMILES"
+    INCHI = "INCHI"
+    INCHIKEY = "INCHIKEY"
+
+
+class EntityPolyType(Enum):
+    CYCLIC_PSEUDO_PEPTIDE = "CYCLIC-PSEUDO-PEPTIDE"
+    PEPTIDE_NUCLEIC_ACID = "PEPTIDE NUCLEIC ACID"
+    POLYDEOXYRIBONUCLEOTIDE = "POLYDEOXYRIBONUCLEOTIDE"
+    DNA_RNA_HYBRID = "POLYDEOXYRIBONUCLEOTIDE/POLYRIBONUCLEOTIDE HYBRID"
+    POLYPEPTIDE_D = "POLYPEPTIDE(D)"
+    POLYPEPTIDE_L = "POLYPEPTIDE(L)"
+    POLYRIBONUCLEOTIDE = "POLYRIBONUCLEOTIDE"
+    OTHER = "OTHER"
+
+
+class Entity(BaseModel):
+    entity_type: EntityType = Field(..., description="The type of the molecular entity")
+    entity_poly_type: Optional[EntityPolyType] = Field(
         None,
-        description="The index of the first residue of the model according to UniProt "
-        "sequence numbering, e.g. 1",
+        description="The type of the molecular entity; similar to _entity_poly.type"
+        " in mmCIF",
     )
-    uniprot_end: Optional[int] = Field(
-        None,
-        description="The index of the last residue of the model according to UniProt "
-        "sequence numbering, e.g. 142",
+    identifier: Optional[str] = Field(None, description="Identifier of the molecule")
+    identifier_category: Optional[IdentifierCategory] = Field(
+        None, description="Category of the identifier"
     )
-    resolution: Optional[float] = Field(
-        None,
-        description="The resolution of the model in Angstrom, if applicable, e.g. 2.1",
-    )
-    coverage: Optional[float] = Field(
-        None, description="Percentage of the UniProt sequence covered by the model"
-    )
-    confidence_version: Optional[str] = Field(
-        None, description="Version of QMEAN used to calculate quality"
-    )
-    confidence_avg_local_score: Optional[float] = Field(
-        None, description="Average of the local QMEAN scores"
-    )
-    model_url: str = Field(..., description="URL of the model coordinates")
-    model_format: ModelFormat = Field(
-        None, description="File format of the coordinates, e.g. PDB"
-    )
-    experimental_method: ExperimentalMethod = Field(
-        None, description="Experimental method used to determine the template"
-    )
-    model_page_url: str = Field(
-        None,
-        description="URL of a web page of the data provider that show the model, "
-        "eg: https://alphafold.ebi.ac.uk/entry/Q5VSL9",
-    )
-    number_of_conformers: int = Field(
-        None,
-        description="The number of conformers in a conformational ensemble, eg: 42",
-    )
-    ensemble_sample_url: str = Field(
-        None,
-        description="URL of a sample of conformations from a conformational ensemble",
-    )
-    confidence_type: str = Field(
-        None, description="Type of the confidence measure, eg; QMEAN"
-    )
-    ensemble_sample_format: ModelFormat = Field(
-        None, description="File format of the sample coordinates, e.g. PDB"
+    description: str = Field(..., description="A textual label of the molecule")
+    chain_ids: List[str] = Field(
+        ..., description="A list of chain identifiers of the molecule"
     )
 
 
@@ -218,54 +211,86 @@ class Structure(BaseModel):
     model_category: ModelCategory = Field(
         ..., description="Category of the model, e.g. EXPERIMENTALLY DETERMINED"
     )
-    provider: Provider = Field(..., description="Name of the model provider")
+    model_url: str = Field(..., description="URL of the model coordinates")
+    model_format: ModelFormat = Field(
+        ..., description="File format of the coordinates, e.g. PDB"
+    )
+    model_type: Optional[ModelType] = Field(
+        None,
+        description="Defines if the coordinates are atomic-level or contains dummy "
+        "atoms (e.g. SAXS models), or a mix of both (e.g. hybrid models)",
+    )
+    model_page_url: Optional[str] = Field(
+        None,
+        description="URL of a web page of the data provider that show the model, "
+        "eg. https://alphafold.ebi.ac.uk/entry/Q5VSL9",
+    )
+    provider: Provider = Field(..., description="Name of the model provider, eg. PED")
+    number_of_conformers: Optional[int] = Field(
+        None, description="The number of conformers in a conformational ensemble"
+    )
+    ensemble_sample_url: Optional[str] = Field(
+        None,
+        description="URL of a sample of conformations from a conformational ensemble, "
+        "eg. https://proteinensemble.org/api/ensemble_sample/PED00001e001",
+    )
+    ensemble_sample_format: Optional[ModelFormat] = Field(
+        None, description="File format of the sample coordinates, e.g. PDB"
+    )
     created: str = Field(
         ...,
         regex="^[1-2][9|0][0-9]{2}-[0-1][0-9]-[0-3][0-9]$",
         description="Date of release of model generation in the format of YYYY-MM-DD",
     )
-    sequence_identity: Optional[float] = Field(
-        None, description="Sequence identity of the model to the UniProt sequence"
+    sequence_identity: float = Field(
+        ..., description="Sequence identity of the model to the UniProt sequence"
     )
-    uniprot_start: Optional[int] = Field(
-        None,
+    uniprot_start: int = Field(
+        ...,
         description="The index of the first residue of the model according to UniProt "
         "sequence numbering, e.g. 1",
     )
-    uniprot_end: Optional[int] = Field(
-        None,
+    uniprot_end: int = Field(
+        ...,
         description="The index of the last residue of the model according to UniProt "
         "sequence numbering, e.g. 142",
     )
-    oligo_state: OligoState = Field(
-        ..., description="Oligomeric state of the model, e.g. MONOMER"
+    coverage: float = Field(
+        ..., description="Percentage of the UniProt sequence covered by the model"
     )
-    preferred_assembly_id: Optional[str] = Field(
-        None, description="Identifier of the preferred assembly in the model"
+    experimental_method: Optional[ExperimentalMethod] = Field(
+        None,
+        description="Experimental method used to determine the structure, if "
+        "applicable",
     )
     resolution: Optional[float] = Field(
         None,
         description="The resolution of the model in Angstrom, if applicable, e.g. 2.1",
     )
-    coverage: Optional[float] = Field(
-        None, description="Percentage of the UniProt sequence covered by the model"
+    confidence_type: Optional[ConfidenceType] = Field(
+        None,
+        description="Type of the confidence measure. This is required for  theoretical"
+        " models.",
     )
     confidence_version: Optional[str] = Field(
-        None, description="Version of QMEAN used to calculate quality"
+        None,
+        description="Version of confidence measure software used to calculate quality."
+        "This is required for theoretical models.",
     )
     confidence_avg_local_score: Optional[float] = Field(
-        None, description="Average of the local QMEAN scores"
-    )
-    model_url: str = Field(..., description="URL of the model coordinates")
-    in_complex_with: Optional[List[InComplexWithItem]] = Field(
         None,
-        description="Information on any macromolecules in complex with the "
-        "protein of interest",
+        description="Average of the confidence measures in the range of [0,1]. Please "
+        "contact 3D-Beacons developers if other estimates are to be added. "
+        "This is required for theoretical models.",
     )
-    chains: List[Chain]
-    model_format: ModelFormat = Field(
-        None, description="File format of the coordinates, e.g. PDB"
+    oligomeric_state: Optional[OligoState] = Field(
+        None, description="Oligomeric state of the model, e.g. MONOMER"
     )
+    preferred_assembly_id: Optional[str] = Field(
+        None, description="Identifier of the preferred assembly in the model"
+    )
+    entities: List[Entity]
+    chains: Optional[List[Chain]]
 
 
 class Result(BaseModel):
@@ -273,16 +298,6 @@ class Result(BaseModel):
         ..., description="Information on the UniProt accession the data corresponds to"
     )
     structures: List[Structure] = Field(
-        ...,
-        description="Information on the structures available for the UniProt accession",
-    )
-
-
-class ResultSummary(BaseModel):
-    uniprot_entry: UniProtEntry = Field(
-        ..., description="Information on the UniProt accession the data corresponds to"
-    )
-    structures: List[StructureSummary] = Field(
         ...,
         description="Information on the structures available for the UniProt accession",
     )
