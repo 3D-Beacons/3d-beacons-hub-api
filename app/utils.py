@@ -1,4 +1,5 @@
 import asyncio
+import re
 
 import httpx
 
@@ -31,5 +32,6 @@ async def send_async_requests(endpoints):
 
 def get_final_service_url(*parts):
     """Returns a final service URL."""
-
-    return "/".join(parts) + f"?version={__version__}"
+    url = "/".join(parts)
+    result = re.sub(r"([^:])//", r"\1/", url)
+    return result + f"?version={__version__}"
