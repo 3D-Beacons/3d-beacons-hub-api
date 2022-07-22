@@ -289,7 +289,7 @@ class Structure(BaseModel):
     preferred_assembly_id: Optional[str] = Field(
         None, description="Identifier of the preferred assembly in the model"
     )
-    entities: List[Entity]
+    entities: Optional[List[Entity]]
     chains: Optional[List[Chain]]
 
 
