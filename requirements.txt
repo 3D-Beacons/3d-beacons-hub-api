@@ -1,5 +1,5 @@
-fastapi==0.65.2
-typing-extensions==3.7.4.3
+fastapi==0.78.0
+typing-extensions==4.2.0
 uvicorn==0.18.2
 httpx==0.23.0
 click==7.1.2
