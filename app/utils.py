@@ -4,7 +4,6 @@ import re
 import httpx
 
 from app import logger
-from app.version import __version__
 
 REQUEST_TIMEOUT = 5
 
@@ -34,4 +33,4 @@ def get_final_service_url(*parts):
     """Returns a final service URL."""
     url = "/".join(parts)
     result = re.sub(r"([^:])//", r"\1/", url)
-    return result + f"?version={__version__}"
+    return result
