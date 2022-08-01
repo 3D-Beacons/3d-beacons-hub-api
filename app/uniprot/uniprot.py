@@ -100,10 +100,11 @@ async def get_uniprot_summary(
             UniprotEntry(**item["uniprot_entry"])
             final_structures.extend(item["structures"])
         except pydantic.error_wrappers.ValidationError:
-            provider = item["structures"][0]["provider"]
-            logger.debug(
-                f"Invalid response from provider {provider} for entry {qualifier}"
-            )
+            provider = item["structures"][0].get("provider")
+            if provider:
+                logger.warning(
+                    f"{provider} returned an erroneous response for {qualifier}"
+                )
         except Exception:
             final_structures = None
 
@@ -187,10 +188,11 @@ async def get_uniprot(
             UniprotEntry(**item["uniprot_entry"])
             final_structures.extend(item["structures"])
         except pydantic.error_wrappers.ValidationError:
-            provider = item["structures"][0]["provider"]
-            logger.debug(
-                f"Invalid response from provider {provider} for entry {qualifier}"
-            )
+            provider = item["structures"][0].get("provider")
+            if provider:
+                logger.warning(
+                    f"{provider} returned an erroneous response for {qualifier}"
+                )
         except Exception:
             final_structures = None
 
