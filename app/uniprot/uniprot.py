@@ -106,7 +106,7 @@ async def get_uniprot_summary(
                     f"{provider} returned an erroneous response for {qualifier}"
                 )
         except Exception:
-            final_structures = None
+            pass
 
     if not final_structures:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
@@ -194,7 +194,7 @@ async def get_uniprot(
                     f"{provider} returned an erroneous response for {qualifier}"
                 )
         except Exception:
-            final_structures = None
+            pass
 
     if not final_structures:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
