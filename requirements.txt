@@ -5,3 +5,5 @@ httpx==0.23.0
 click==7.1.2
 requests==2.24.0
 prometheus-fastapi-instrumentator==5.3.0
+aioredis==2.0.0
+msgpack==1.0.2
