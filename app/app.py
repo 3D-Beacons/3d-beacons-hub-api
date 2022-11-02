@@ -6,6 +6,8 @@ from fastapi.middleware.gzip import GZipMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 from starlette.requests import Request
 
+from app import REDIS_URL
+from app.sequence.sequence import sequence_route
 from app.uniprot.uniprot import uniprot_route
 from app.version import __version__ as schema_version
 
@@ -26,6 +28,7 @@ app = FastAPI(
     version=schema_version,
 )
 app.include_router(uniprot_route, prefix="/uniprot")
+app.include_router(sequence_route, prefix="/sequence")
 
 origins = ["*"]
 
@@ -54,9 +57,11 @@ async def add_extra_headers(request: Request, call_next):
 
 @app.on_event("startup")
 async def load_configs():
+    from app.cache.redis_cache import RedisCache
     from app.config import load_data_file
 
     load_data_file()
+    RedisCache.init_redis(REDIS_URL, "utf8")
 
 
 @app.on_event("shutdown")
