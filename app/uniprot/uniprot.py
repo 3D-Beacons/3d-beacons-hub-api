@@ -21,6 +21,80 @@ from app.utils import get_final_service_url, send_async_requests
 uniprot_route = APIRouter()
 
 
+async def get_uniprot_summary_helper(
+    qualifier: str, provider=None, template=None, res_range=None, exclude_provider=None
+):
+    f"""Helper function to get uniprot summary.
+
+    Args:
+        qualifier (str): {UNIPROT_QUAL_DESC}
+        provider (str, optional): Data provider
+        template (str, optional): {TEMPLATE_DESC}
+        res_range (str, optional): Residue range
+        exclude_provider (str, optional): Provider to exclude
+
+    Returns:
+        Result: A Result summary object with experimental and theoretical models.
+    """
+    qualifier = qualifier.upper().strip(" ")
+    if provider:
+        provider = provider.strip(" ")
+    if template:
+        template = template.strip(" ")
+    if res_range:
+        res_range = res_range.strip(" ")
+    if exclude_provider:
+        exclude_provider = exclude_provider.strip(" ")
+
+    services = get_services(
+        service_type="summary", provider=provider, exclude_provider=exclude_provider
+    )
+    calls = []
+    for service in services:
+        base_url = get_base_service_url(service["provider"])
+        final_url = get_final_service_url(
+            base_url, service["accessPoint"], f"{qualifier}.json"
+        )
+
+        if res_range:
+            final_url = f"{final_url}&range={res_range}"
+
+        calls.append(final_url)
+
+    result = await send_async_requests(calls)
+    final_result = [
+        x.json() for x in result if x and x.status_code == status.HTTP_200_OK
+    ]
+    if not final_result:
+        return None
+
+    final_structures: List[Overview] = []
+    uniprot_entry: UniprotEntry = UniprotEntry(**final_result[0]["uniprot_entry"])
+
+    for item in final_result:
+        # Remove erroneous responses
+        try:
+            Overview(**item["structures"][0])
+            UniprotEntry(**item["uniprot_entry"])
+            final_structures.extend(item["structures"])
+        except pydantic.error_wrappers.ValidationError:
+            provider = item["structures"][0].get("provider")
+            if provider:
+                logger.warning(
+                    f"{provider} returned an erroneous response for {qualifier}"
+                )
+        except Exception:
+            pass
+
+    if not final_structures:
+        None
+
+    api_result: UniprotSummary = UniprotSummary(
+        **{"uniprot_entry": uniprot_entry, "structures": final_structures}
+    )
+    return api_result
+
+
 @uniprot_route.get(
     "/summary/{qualifier}.json",
     status_code=status.HTTP_200_OK,
@@ -59,7 +133,33 @@ async def get_uniprot_summary(
     Returns:
         Result: A Result summary object with experimental and theoretical models.
     """
+    results = await get_uniprot_summary_helper(
+        qualifier, provider, template, res_range, exclude_provider
+    )
 
+    if not results:
+        return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
+    else:
+        return results
+
+
+async def get_uniprot_helper(
+    qualifier: str,
+    provider=None,
+    template=None,
+    res_range=None,
+):
+    f"""Helper function to get uniprot details.
+
+    Args:
+        qualifier (str): {UNIPROT_QUAL_DESC}
+        provider (str, optional): Data provider
+        template (str, optional): {TEMPLATE_DESC}
+        res_range (str, optional): Residue range
+
+    Returns:
+        Result: A Result object with experimental and theoretical models.
+    """
     qualifier = qualifier.upper().strip(" ")
     if provider:
         provider = provider.strip(" ")
@@ -67,12 +167,7 @@ async def get_uniprot_summary(
         template = template.strip(" ")
     if res_range:
         res_range = res_range.strip(" ")
-    if exclude_provider:
-        exclude_provider = exclude_provider.strip(" ")
-
-    services = get_services(
-        service_type="summary", provider=provider, exclude_provider=exclude_provider
-    )
+    services = get_services(service_type="uniprot", provider=provider)
     calls = []
     for service in services:
         base_url = get_base_service_url(service["provider"])
@@ -87,16 +182,17 @@ async def get_uniprot_summary(
 
     result = await send_async_requests(calls)
     final_result = [x.json() for x in result if x and x.status_code == 200]
-    if not final_result:
-        return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
 
-    final_structures: List[Overview] = []
+    if not final_result:
+        return None
+
+    final_structures: List[Detailed] = []
     uniprot_entry: UniprotEntry = UniprotEntry(**final_result[0]["uniprot_entry"])
 
     for item in final_result:
         # Remove erroneous responses
         try:
-            Overview(**item["structures"][0])
+            Detailed(**item["structures"][0])
             UniprotEntry(**item["uniprot_entry"])
             final_structures.extend(item["structures"])
         except pydantic.error_wrappers.ValidationError:
@@ -109,11 +205,12 @@ async def get_uniprot_summary(
             pass
 
     if not final_structures:
-        return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
+        return None
 
-    api_result: UniprotSummary = UniprotSummary(
+    api_result: UniprotDetails = UniprotDetails(
         **{"uniprot_entry": uniprot_entry, "structures": final_structures}
     )
+
     return api_result
 
 
@@ -139,68 +236,27 @@ async def get_uniprot(
         alias="range",
     ),
 ):
-    """Returns experimental and theoretical models for a UniProt accession or entry name
+    f"""Returns experimental and theoretical models for a UniProt accession or entry name
 
     Args:
-        qualifier (str): UniProtKB accession number (AC) or entry name (ID).
+        qualifier (str): {UNIPROT_QUAL_DESC}
         provider (str, optional): Data provider
-        template (str, optional): 4 letter PDB code, or 4 letter code with assembly ID
-        and chain for SMTL entries
+        template (str, optional): {TEMPLATE_DESC}
         res_range (str, optional): Residue range
+        exclude_provider (str, optional): Provider to exclude
 
     Returns:
         Result: A Result object with experimental and theoretical models.
     """
 
-    qualifier = qualifier.upper().strip(" ")
-    if provider:
-        provider = provider.strip(" ")
-    if template:
-        template = template.strip(" ")
-    if res_range:
-        res_range = res_range.strip(" ")
-    services = get_services(service_type="uniprot", provider=provider)
-    calls = []
-    for service in services:
-        base_url = get_base_service_url(service["provider"])
-        final_url = get_final_service_url(
-            base_url, service["accessPoint"], f"{qualifier}.json"
-        )
-
-        if res_range:
-            final_url = f"{final_url}&range={res_range}"
-
-        calls.append(final_url)
-
-    result = await send_async_requests(calls)
-    final_result = [x.json() for x in result if x and x.status_code == 200]
-
-    if not final_result:
-        return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
-
-    final_structures: List[Detailed] = []
-    uniprot_entry: UniprotEntry = UniprotEntry(**final_result[0]["uniprot_entry"])
-
-    for item in final_result:
-        # Remove erroneous responses
-        try:
-            Detailed(**item["structures"][0])
-            UniprotEntry(**item["uniprot_entry"])
-            final_structures.extend(item["structures"])
-        except pydantic.error_wrappers.ValidationError:
-            provider = item["structures"][0].get("provider")
-            if provider:
-                logger.warning(
-                    f"{provider} returned an erroneous response for {qualifier}"
-                )
-        except Exception:
-            pass
-
-    if not final_structures:
-        return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
-
-    api_result: UniprotDetails = UniprotDetails(
-        **{"uniprot_entry": uniprot_entry, "structures": final_structures}
+    results = await get_uniprot_helper(
+        qualifier,
+        provider,
+        template,
+        res_range,
     )
 
-    return api_result
+    if not results:
+        return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
+    else:
+        return results
