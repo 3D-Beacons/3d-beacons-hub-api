@@ -13,7 +13,7 @@ repos:
         # args: ["--maxkb=3000"]
       - id: check-ast
       # - id: no-commit-to-branch
-  - repo: https://gitlab.com/pycqa/flake8
+  - repo: https://github.com/pycqa/flake8
     rev: 4.0.1
     hooks:
       - id: flake8
