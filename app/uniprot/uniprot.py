@@ -22,7 +22,12 @@ uniprot_route = APIRouter()
 
 
 async def get_uniprot_summary_helper(
-    qualifier: str, provider=None, template=None, res_range=None, exclude_provider=None
+    qualifier: str,
+    provider=None,
+    template=None,
+    res_range=None,
+    exclude_provider=None,
+    uniprot_checksum=None,
 ):
     f"""Helper function to get uniprot summary.
 
@@ -32,6 +37,7 @@ async def get_uniprot_summary_helper(
         template (str, optional): {TEMPLATE_DESC}
         res_range (str, optional): Residue range
         exclude_provider (str, optional): Provider to exclude
+        uniprot_checksum (str, optional): UniProt checksum
 
     Returns:
         Result: A Result summary object with experimental and theoretical models.
@@ -45,6 +51,8 @@ async def get_uniprot_summary_helper(
         res_range = res_range.strip(" ")
     if exclude_provider:
         exclude_provider = exclude_provider.strip(" ")
+    if uniprot_checksum:
+        uniprot_checksum = uniprot_checksum.strip(" ")
 
     services = get_services(
         service_type="summary", provider=provider, exclude_provider=exclude_provider
@@ -65,6 +73,10 @@ async def get_uniprot_summary_helper(
     final_result = [
         x.json() for x in result if x and x.status_code == status.HTTP_200_OK
     ]
+
+    if uniprot_checksum:
+        final_result = filter_on_checksum(final_result, uniprot_checksum)
+
     if not final_result:
         return None
 
@@ -75,7 +87,6 @@ async def get_uniprot_summary_helper(
         # Remove erroneous responses
         try:
             Overview(**item["structures"][0])
-            UniprotEntry(**item["uniprot_entry"])
             final_structures.extend(item["structures"])
         except pydantic.error_wrappers.ValidationError:
             provider = item["structures"][0].get("provider")
@@ -119,6 +130,7 @@ async def get_uniprot_summary(
     exclude_provider: Optional[str] = Query(
         None, description="Provider to exclude. eg: pdbe"
     ),
+    uniprot_checksum: Optional[str] = Query(None, description="UniProt checksum"),
 ):
     f"""Returns summary of experimental and theoretical models for a UniProt
     accession or entry name
@@ -129,12 +141,18 @@ async def get_uniprot_summary(
         template (str, optional): {TEMPLATE_DESC}
         res_range (str, optional): Residue range
         exclude_provider (str, optional): Provider to exclude
+        uniport_checksum (str, optional): UniProt checksum
 
     Returns:
         Result: A Result summary object with experimental and theoretical models.
     """
     results = await get_uniprot_summary_helper(
-        qualifier, provider, template, res_range, exclude_provider
+        qualifier,
+        provider,
+        template,
+        res_range,
+        exclude_provider,
+        uniprot_checksum,
     )
 
     if not results:
@@ -148,6 +166,7 @@ async def get_uniprot_helper(
     provider=None,
     template=None,
     res_range=None,
+    uniprot_checksum=None,
 ):
     f"""Helper function to get uniprot details.
 
@@ -156,6 +175,7 @@ async def get_uniprot_helper(
         provider (str, optional): Data provider
         template (str, optional): {TEMPLATE_DESC}
         res_range (str, optional): Residue range
+        uniprot_checksum (str, optional): UniProt checksum
 
     Returns:
         Result: A Result object with experimental and theoretical models.
@@ -167,6 +187,9 @@ async def get_uniprot_helper(
         template = template.strip(" ")
     if res_range:
         res_range = res_range.strip(" ")
+    if uniprot_checksum:
+        uniprot_checksum = uniprot_checksum.strip(" ")
+
     services = get_services(service_type="uniprot", provider=provider)
     calls = []
     for service in services:
@@ -182,6 +205,9 @@ async def get_uniprot_helper(
 
     result = await send_async_requests(calls)
     final_result = [x.json() for x in result if x and x.status_code == 200]
+
+    if uniprot_checksum:
+        final_result = filter_on_checksum(final_result, uniprot_checksum)
 
     if not final_result:
         return None
@@ -235,6 +261,7 @@ async def get_uniprot(
         pattern="^[0-9]+-[0-9]+$",
         alias="range",
     ),
+    uniprot_checksum: Optional[str] = Query(None, description="UniProt checksum"),
 ):
     f"""Returns experimental and theoretical models for a UniProt accession or entry name
 
@@ -244,6 +271,7 @@ async def get_uniprot(
         template (str, optional): {TEMPLATE_DESC}
         res_range (str, optional): Residue range
         exclude_provider (str, optional): Provider to exclude
+        uniprot_checksum (str, optional): UniProt checksum
 
     Returns:
         Result: A Result object with experimental and theoretical models.
@@ -254,9 +282,21 @@ async def get_uniprot(
         provider,
         template,
         res_range,
+        uniprot_checksum,
     )
 
     if not results:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
     else:
         return results
+
+
+def filter_on_checksum(in_result, checksum: str):
+    checksum_filtered_list = []
+
+    for item in in_result:
+        uniprot_checksum = item["uniprot_entry"].get("uniprot_checksum")
+        if uniprot_checksum and uniprot_checksum == checksum:
+            checksum_filtered_list.append(item)
+
+    return checksum_filtered_list
