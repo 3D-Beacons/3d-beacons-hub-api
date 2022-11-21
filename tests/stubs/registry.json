@@ -1,0 +1,37 @@
+{
+    "providers": [
+        {
+            "providerId": "providerOneId",
+            "providerName": "providerOneName",
+            "providerDescription": "providerOneDesc",
+            "providerUrl": "https://providerOneUrl",
+            "baseServiceUrl": "https://providerOneBaseServiceUrl",
+            "devBaseServiceUrl": "https://providerOneDevBaseServiceUrl"
+        },
+        {
+            "providerId": "providerTwoId",
+            "providerName": "providerTwoName",
+            "providerDescription": "providerTwoDesc",
+            "providerUrl": "https://providerTwoUrl",
+            "baseServiceUrl": "https://providerTwoBaseServiceUrl",
+            "devBaseServiceUrl": "https://providerTwoDevBaseServiceUrl"
+        }
+    ],
+    "services": [
+        {
+            "serviceType": "serviceOne",
+            "provider": "providerOne",
+            "accessPoint": "service/"
+        },
+        {
+            "serviceType": "serviceOne",
+            "provider": "providerTwo",
+            "accessPoint": "service/v/"
+        },
+        {
+            "serviceType": "serviceTwo",
+            "provider": "providerOne",
+            "accessPoint": "service/2/"
+        }
+    ]
+}

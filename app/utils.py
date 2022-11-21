@@ -1,4 +1,5 @@
 import asyncio
+import functools
 import re
 
 import httpx
@@ -35,3 +36,18 @@ def get_final_service_url(*parts):
     url = "/".join(parts)
     result = re.sub(r"([^:])//", r"\1/", url)
     return result + f"?version={__version__}"
+
+
+def clean_args():
+    def wrapper(func):
+        @functools.wraps(func)
+        def inner(*args, **kwargs):
+            cleaned_args = []
+            for x in args:
+                cleaned_args.append(x.strip(" ") if x else x)
+
+            return func(*cleaned_args, **kwargs)
+
+        return inner
+
+    return wrapper

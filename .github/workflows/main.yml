@@ -25,6 +25,8 @@ jobs:
         pip install -r dev-requirements.txt
         pip install -r requirements.txt
     - name: Run Tests
+      env:
+        ENV: DEV
       run: |
         make test
     - name: Upload coverage to Codecov

@@ -30,7 +30,7 @@ def valid_uniprot_structures_summary():
 
 
 @pytest.fixture(scope="session")
-def services():
-    with open("app/config/data.json") as fp:
+def registry():
+    with open("tests/stubs/registry.json") as fp:
         data = json.load(fp)
-        return data["services"]
+        return data

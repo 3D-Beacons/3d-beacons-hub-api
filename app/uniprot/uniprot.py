@@ -16,11 +16,12 @@ from app.uniprot.schema import (
     UniprotEntry,
     UniprotSummary,
 )
-from app.utils import get_final_service_url, send_async_requests
+from app.utils import clean_args, get_final_service_url, send_async_requests
 
 uniprot_route = APIRouter()
 
 
+@clean_args()
 async def get_uniprot_summary_helper(
     qualifier: str,
     provider=None,
@@ -42,18 +43,7 @@ async def get_uniprot_summary_helper(
     Returns:
         Result: A Result summary object with experimental and theoretical models.
     """
-    qualifier = qualifier.upper().strip(" ")
-    if provider:
-        provider = provider.strip(" ")
-    if template:
-        template = template.strip(" ")
-    if res_range:
-        res_range = res_range.strip(" ")
-    if exclude_provider:
-        exclude_provider = exclude_provider.strip(" ")
-    if uniprot_checksum:
-        uniprot_checksum = uniprot_checksum.strip(" ")
-
+    qualifier = qualifier.upper()
     services = get_services(
         service_type="summary", provider=provider, exclude_provider=exclude_provider
     )
@@ -81,7 +71,9 @@ async def get_uniprot_summary_helper(
         return None
 
     final_structures: List[Overview] = []
-    uniprot_entry: UniprotEntry = UniprotEntry(**final_result[0]["uniprot_entry"])
+    uniprot_entry: UniprotEntry = UniprotEntry(
+        **get_first_entry_with_checksum(final_result)
+    )
 
     for item in final_result:
         # Remove erroneous responses
@@ -113,7 +105,7 @@ async def get_uniprot_summary_helper(
     response_model_exclude_unset=True,
 )
 async def get_uniprot_summary(
-    qualifier: Any = Path(..., description=UNIPROT_QUAL_DESC),
+    qualifier: Any = Path(..., description=UNIPROT_QUAL_DESC, example="P38398"),
     provider: Optional[Any] = Query(
         None, enum=[x["provider"] for x in get_services("summary")]
     ),
@@ -161,6 +153,7 @@ async def get_uniprot_summary(
         return results
 
 
+@clean_args()
 async def get_uniprot_helper(
     qualifier: str,
     provider=None,
@@ -180,16 +173,7 @@ async def get_uniprot_helper(
     Returns:
         Result: A Result object with experimental and theoretical models.
     """
-    qualifier = qualifier.upper().strip(" ")
-    if provider:
-        provider = provider.strip(" ")
-    if template:
-        template = template.strip(" ")
-    if res_range:
-        res_range = res_range.strip(" ")
-    if uniprot_checksum:
-        uniprot_checksum = uniprot_checksum.strip(" ")
-
+    qualifier = qualifier.upper()
     services = get_services(service_type="uniprot", provider=provider)
     calls = []
     for service in services:
@@ -213,7 +197,9 @@ async def get_uniprot_helper(
         return None
 
     final_structures: List[Detailed] = []
-    uniprot_entry: UniprotEntry = UniprotEntry(**final_result[0]["uniprot_entry"])
+    uniprot_entry: UniprotEntry = UniprotEntry(
+        **get_first_entry_with_checksum(final_result)
+    )
 
     for item in final_result:
         # Remove erroneous responses
@@ -245,7 +231,9 @@ async def get_uniprot_helper(
 )
 async def get_uniprot(
     qualifier: Any = Path(
-        ..., description="UniProtKB accession number (AC) or entry name (ID)"
+        ...,
+        description="UniProtKB accession number (AC) or entry name (ID)",
+        example="P38398",
     ),
     provider: Optional[Any] = Query(
         None, enum=[x["provider"] for x in get_services("uniprot")]
@@ -300,3 +288,15 @@ def filter_on_checksum(in_result, checksum: str):
             checksum_filtered_list.append(item)
 
     return checksum_filtered_list
+
+
+def get_first_entry_with_checksum(in_result: List):
+    for item in in_result:
+        uniprot_checksum = item["uniprot_entry"].get("uniprot_checksum")
+        if uniprot_checksum:
+            return item["uniprot_entry"]
+
+    if in_result:
+        return in_result[0]["uniprot_entry"]
+
+    return None
