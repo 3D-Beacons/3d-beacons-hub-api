@@ -6,3 +6,5 @@ TEMPLATE_DESC = (
     "Template is 4 letter PDB code, or 4 letter code with "
     "assembly ID and chain for SMTL entries"
 )
+UNP_CHECKSUM_DESC = "CRC64 checksum of the UniProt sequence"
+ENSEMBL_QUAL_DESC = "Ensembl identifier."

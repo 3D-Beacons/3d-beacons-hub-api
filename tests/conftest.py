@@ -34,3 +34,15 @@ def registry():
     with open("tests/stubs/registry.json") as fp:
         data = json.load(fp)
         return data
+
+
+@pytest.fixture(scope="session")
+def valid_gifts_response():
+    with open("tests/stubs/gifts_response.json") as fp:
+        data = json.load(fp)
+        return data
+
+
+@pytest.fixture(scope="session")
+def valid_uniprot_list_summary():
+    return StubResponse(status_code=200, stub_for="uniprot_list_summary")

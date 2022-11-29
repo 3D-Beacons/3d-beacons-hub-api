@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any, List, Optional
 
 import pydantic
@@ -7,9 +8,10 @@ from starlette import status
 from starlette.responses import JSONResponse
 
 from app import logger
-from app.config import get_base_service_url, get_services
-from app.constants import TEMPLATE_DESC, UNIPROT_QUAL_DESC
+from app.config import MAX_POST_LIMIT, get_base_service_url, get_services
+from app.constants import TEMPLATE_DESC, UNIPROT_QUAL_DESC, UNP_CHECKSUM_DESC
 from app.uniprot.schema import (
+    AccessionListRequest,
     Detailed,
     Overview,
     UniprotDetails,
@@ -38,7 +40,7 @@ async def get_uniprot_summary_helper(
         template (str, optional): {TEMPLATE_DESC}
         res_range (str, optional): Residue range
         exclude_provider (str, optional): Provider to exclude
-        uniprot_checksum (str, optional): UniProt checksum
+        uniprot_checksum (str, optional): {UNP_CHECKSUM_DESC}
 
     Returns:
         Result: A Result summary object with experimental and theoretical models.
@@ -90,7 +92,7 @@ async def get_uniprot_summary_helper(
             pass
 
     if not final_structures:
-        None
+        return None
 
     api_result: UniprotSummary = UniprotSummary(
         **{"uniprot_entry": uniprot_entry, "structures": final_structures}
@@ -103,6 +105,7 @@ async def get_uniprot_summary_helper(
     status_code=status.HTTP_200_OK,
     response_model=UniprotSummary,
     response_model_exclude_unset=True,
+    tags=["UniProt"],
 )
 async def get_uniprot_summary(
     qualifier: Any = Path(..., description=UNIPROT_QUAL_DESC, example="P38398"),
@@ -120,9 +123,11 @@ async def get_uniprot_summary(
         alias="range",
     ),
     exclude_provider: Optional[str] = Query(
-        None, description="Provider to exclude. eg: pdbe"
+        None,
+        description="Provider to exclude.",
+        enum=[x["provider"] for x in get_services("summary")],
     ),
-    uniprot_checksum: Optional[str] = Query(None, description="UniProt checksum"),
+    uniprot_checksum: Optional[str] = Query(None, description=UNP_CHECKSUM_DESC),
 ):
     f"""Returns summary of experimental and theoretical models for a UniProt
     accession or entry name
@@ -133,7 +138,7 @@ async def get_uniprot_summary(
         template (str, optional): {TEMPLATE_DESC}
         res_range (str, optional): Residue range
         exclude_provider (str, optional): Provider to exclude
-        uniport_checksum (str, optional): UniProt checksum
+        uniport_checksum (str, optional): {UNP_CHECKSUM_DESC}
 
     Returns:
         Result: A Result summary object with experimental and theoretical models.
@@ -153,6 +158,76 @@ async def get_uniprot_summary(
         return results
 
 
+@uniprot_route.post(
+    "/summary",
+    status_code=status.HTTP_200_OK,
+    response_model=List[UniprotSummary],
+    response_model_exclude_unset=True,
+    description="Returns summary of experimental and theoretical models for a "
+    "list of UniProt accessions",
+    tags=["UniProt"],
+)
+async def get_list_of_uniprot_summary(list_request: AccessionListRequest):
+    """Returns summary of experimental and theoretical models for a list of UniProt
+    accessions
+
+    Args:
+        list_request (AccessionListRequest): List of UniProt accession objects
+
+    Returns:
+        Result: A list of Result summary object with experimental and theoretical
+        models for UniProt accessions.
+    """
+
+    results = await get_list_of_uniprot_summary_helper(list_request)
+
+    if not results:
+        return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
+
+    return results
+
+
+async def get_list_of_uniprot_summary_helper(list_request: AccessionListRequest):
+    """Returns summary of experimental and theoretical models for a list of UniProt
+    accessions
+
+    Args:
+        list_request (AccessionListRequest): List of UniProt accession objects
+
+    Returns:
+        Result: A list of Result summary object with experimental and theoretical
+        models for UniProt accessions.
+    """
+    if len(list_request.accessions) > int(MAX_POST_LIMIT):
+        return JSONResponse(
+            content={
+                "message": f"We cannot accept more than {MAX_POST_LIMIT} accessions!"
+            },
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    summary_jobs = [
+        asyncio.create_task(
+            get_uniprot_summary_helper(
+                q,
+                list_request.provider,
+                template=None,
+                res_range=None,
+                exclude_provider=list_request.exclude_provider,
+                uniprot_checksum=None,
+            )
+        )
+        for q in list_request.accessions
+    ]
+
+    results = await asyncio.gather(*summary_jobs)
+
+    if not results or all([x is None for x in results]):
+        return None
+
+    return [x for x in results if x]
+
+
 @clean_args()
 async def get_uniprot_helper(
     qualifier: str,
@@ -168,7 +243,7 @@ async def get_uniprot_helper(
         provider (str, optional): Data provider
         template (str, optional): {TEMPLATE_DESC}
         res_range (str, optional): Residue range
-        uniprot_checksum (str, optional): UniProt checksum
+        uniprot_checksum (str, optional): {UNP_CHECKSUM_DESC}
 
     Returns:
         Result: A Result object with experimental and theoretical models.
@@ -227,7 +302,10 @@ async def get_uniprot_helper(
 
 
 @uniprot_route.get(
-    "/{qualifier}.json", status_code=status.HTTP_200_OK, response_model=UniprotDetails
+    "/{qualifier}.json",
+    status_code=status.HTTP_200_OK,
+    response_model=UniprotDetails,
+    tags=["UniProt"],
 )
 async def get_uniprot(
     qualifier: Any = Path(
@@ -249,7 +327,7 @@ async def get_uniprot(
         pattern="^[0-9]+-[0-9]+$",
         alias="range",
     ),
-    uniprot_checksum: Optional[str] = Query(None, description="UniProt checksum"),
+    uniprot_checksum: Optional[str] = Query(None, description=UNP_CHECKSUM_DESC),
 ):
     f"""Returns experimental and theoretical models for a UniProt accession or entry name
 
@@ -259,7 +337,7 @@ async def get_uniprot(
         template (str, optional): {TEMPLATE_DESC}
         res_range (str, optional): Residue range
         exclude_provider (str, optional): Provider to exclude
-        uniprot_checksum (str, optional): UniProt checksum
+        uniprot_checksum (str, optional): {UNP_CHECKSUM_DESC}
 
     Returns:
         Result: A Result object with experimental and theoretical models.

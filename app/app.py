@@ -6,6 +6,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 from starlette.requests import Request
 
+from app.ensembl.ensembl import ensembl_route
 from app.uniprot.uniprot import uniprot_route
 from app.version import __version__ as schema_version
 
@@ -26,6 +27,7 @@ app = FastAPI(
     version=schema_version,
 )
 app.include_router(uniprot_route, prefix="/uniprot")
+app.include_router(ensembl_route, prefix="/ensembl")
 
 origins = ["*"]
 
