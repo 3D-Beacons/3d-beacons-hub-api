@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
 
 from fastapi.params import Path, Query
 from fastapi.routing import APIRouter
@@ -69,17 +69,24 @@ async def get_ensembl_summary_helper(
     if not ensembl_mappings:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
 
-    transcript_dict = {}
+    transcript_dict: Dict[str, List] = {}
     uniprot_request_list = AccessionListRequest(accessions=[], provider=provider)
+    uniprot_set = set()
 
     for mapping in ensembl_mappings["entryMappings"]:
         uniprot_accession = mapping["uniprotEntry"]["uniprotAccession"]
-        uniprot_request_list.accessions.append(uniprot_accession)
-        transcript_dict[uniprot_accession] = mapping["ensemblTranscript"]
-        transcript_dict[uniprot_accession].update(
+        uniprot_set.add(uniprot_accession)
+
+        mapping["ensemblTranscript"].update(
             {"alignment_difference": mapping["alignment_difference"]}
         )
 
+        if not transcript_dict.get(uniprot_accession):
+            transcript_dict[uniprot_accession] = []
+
+        transcript_dict[uniprot_accession].append(mapping["ensemblTranscript"])
+
+    uniprot_request_list.accessions = list(uniprot_set)
     uniprot_summary = await get_list_of_uniprot_summary_helper(uniprot_request_list)
 
     if not uniprot_summary:
@@ -93,13 +100,13 @@ async def get_ensembl_summary_helper(
     }
 
     for uniprot in uniprot_summary:
-        ensembl_transcript = transcript_dict[uniprot.uniprot_entry.ac]
-        results["uniprot_mappings"].append(
-            {
-                "ensembl_transcript": ensembl_transcript,
-                "uniprot_accession": uniprot,
-            }
-        )
+        for ensembl_transcript in transcript_dict[uniprot.uniprot_entry.ac]:
+            results["uniprot_mappings"].append(
+                {
+                    "ensembl_transcript": ensembl_transcript,
+                    "uniprot_accession": uniprot,
+                }
+            )
 
     return results
 
