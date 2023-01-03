@@ -94,6 +94,7 @@ class ExperimentalMethod(Enum):
 class ConfidenceType(Enum):
     pLDDT = "pLDDT"
     QMEANDisCo = "QMEANDisCo"
+    ipTMPlusPTM = "ipTM+pTM"
 
 
 class OligomericState(Enum):
