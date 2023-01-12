@@ -46,3 +46,8 @@ def valid_gifts_response():
 @pytest.fixture(scope="session")
 def valid_uniprot_list_summary():
     return StubResponse(status_code=200, stub_for="uniprot_list_summary")
+
+
+@pytest.fixture(scope="session")
+def seq_search_response():
+    return StubResponse(status_code=200, stub_for="seq_search_response")

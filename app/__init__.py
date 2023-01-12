@@ -7,3 +7,5 @@ logger = logging.getLogger(__name__)
 
 if os.getenv("DEBUG"):
     logger.setLevel(logging.DEBUG)
+
+REDIS_URL = os.environ.get("REDIS_URL")
