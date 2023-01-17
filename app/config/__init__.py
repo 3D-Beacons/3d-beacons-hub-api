@@ -8,7 +8,7 @@ from app import logger
 
 DATA_FILE = "data.json"
 ENV = os.getenv("ENVIRONMENT", "DEV")
-MAX_POST_LIMIT = os.getenv("MAX_POST_LIMIT", "20")
+MAX_POST_LIMIT = int(os.getenv("MAX_POST_LIMIT", "20"))
 GIFTS_API = os.getenv("GIFTS_API", "https://www.ebi.ac.uk/gifts/api/mappings/")
 
 logger.debug(f"Environment is {ENV}")

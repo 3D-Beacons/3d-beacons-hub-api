@@ -30,5 +30,9 @@ class RedisCache:
         return await cls.redis_client.hset(prefix, key, value)
 
     @classmethod
+    async def hdel(cls, prefix: str, key: str):
+        return await cls.redis_client.hdel(prefix, key)
+
+    @classmethod
     async def flush(cls):
         return await cls.redis_client.flushall()

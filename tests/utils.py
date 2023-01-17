@@ -27,3 +27,21 @@ class StubResponse:
 
     def json(self):
         return self.data
+
+
+class Content:
+    def __init__(self, data) -> None:
+        self.data = data
+
+    def decode(self):
+        return self.data
+
+
+class StubHttpResponse:
+    def __init__(self, status_code: int, data):
+        self.status_code = status_code
+        self.content = Content(data)
+        self.data = data
+
+    def json(self):
+        return self.data
