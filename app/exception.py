@@ -6,6 +6,10 @@ class JobResultsNotFoundException(Exception):
     pass
 
 
+class JobStatusNotFoundException(Exception):
+    pass
+
+
 class NotInCacheException(Exception):
     pass
 

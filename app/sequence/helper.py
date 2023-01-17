@@ -10,6 +10,7 @@ from app.config import MAX_POST_LIMIT
 from app.exception import (
     JobNotFoundException,
     JobResultsNotFoundException,
+    JobStatusNotFoundException,
     RequestSubmissionException,
 )
 from app.uniprot.schema import AccessionListRequest, UniprotSummary
@@ -35,8 +36,10 @@ async def get_job_status(job_id: str):
     url = f"https://www.ebi.ac.uk/Tools/services/rest/ncbiblast/status/{job_id}"
 
     response = await request_get(url)
+
     if response and response.status_code == HTTP_200_OK:
         return response.content.decode()
+    raise JobStatusNotFoundException("Job status not found!")
 
 
 async def get_job_accs_results(job_id: str):
@@ -228,8 +231,9 @@ async def prepare_dictionary_of_summary_results(accessions: List[str]) -> Dict:
         Dict: A dictionary of summary results
     """
     result_dict: Dict[str, UniprotSummary] = {k: None for k in accessions}
+    accession_obj_list = prepare_accession_list(accessions)
     summary_results: List[UniprotSummary] = await get_list_of_uniprot_summary_helper(
-        prepare_accession_list(accessions)
+        accession_obj_list
     )
 
     if not summary_results:
