@@ -140,6 +140,13 @@ async def get_hits(job_id: str):
         )
 
     hit_dictionary = prepare_hit_dictionary(json_results_resp["hits"])
+
+    if not hit_dictionary:
+        return JSONResponse(
+            status_code=HTTP_404_NOT_FOUND,
+            content={"message": "No hits found for this sequence"},
+        )
+
     await set_job_results_in_cache(actual_job_id, hit_dictionary)
 
     return [x for x in hit_dictionary.values()]
