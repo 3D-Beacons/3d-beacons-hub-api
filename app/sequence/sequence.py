@@ -37,6 +37,7 @@ from app.sequence.helper import (
 from app.sequence.schema import (
     ErrorMessage,
     NoJobFoundMessage,
+    SearchAccession,
     SearchInProgressMessage,
     SearchResults,
     SearchSuccessMessage,
@@ -86,6 +87,62 @@ async def search(sequence: Sequence):
         status_code=HTTP_202_ACCEPTED,
         content={"job_id": hashed_sequence},
     )
+
+
+@sequence_route.get(
+    "/hits",
+    status_code=HTTP_200_OK,
+    response_model=List[SearchAccession],
+    responses={
+        HTTP_200_OK: {"model": List[SearchAccession]},
+        HTTP_202_ACCEPTED: {"model": SearchInProgressMessage},
+        HTTP_400_BAD_REQUEST: {"model": NoJobFoundMessage},
+    },
+    include_in_schema=True,
+    tags=["Sequence"],
+)
+async def get_hits(job_id: str):
+    try:
+        actual_job_id = await get_job_id(job_id)
+    except JobNotFoundException:
+        return JSONResponse(
+            status_code=HTTP_400_BAD_REQUEST,
+            content={"message": "No search request found for this sequence"},
+        )
+
+    # check if there are cached results for the job
+    try:
+        job_result_hit_dictionary = await get_job_results_from_cache(actual_job_id)
+        return [x for x in job_result_hit_dictionary.values()]
+    except JobResultsNotFoundException:
+        job_result_hit_dictionary = None
+
+    try:
+        job_status = await get_job_status(actual_job_id)
+    except JobStatusNotFoundException:
+        return await handle_no_job_found(job_id, actual_job_id)
+
+    # sends wait response if job is still running
+    if job_status == "RUNNING":
+        return JSONResponse(
+            status_code=HTTP_202_ACCEPTED,
+            content={"message": "Search in progress, please try after sometime!"},
+        )
+    elif job_status == "NOT_FOUND":
+        return await handle_no_job_found(job_id, actual_job_id)
+
+    json_results_resp = await get_job_json_results(actual_job_id)
+
+    if not json_results_resp:
+        return JSONResponse(
+            status_code=HTTP_400_BAD_REQUEST,
+            content={"message": "No search request found for this sequence"},
+        )
+
+    hit_dictionary = prepare_hit_dictionary(json_results_resp["hits"])
+    await set_job_results_in_cache(actual_job_id, hit_dictionary)
+
+    return [x for x in hit_dictionary.values()]
 
 
 @sequence_route.get(
