@@ -13,8 +13,7 @@ from app.exception import (
     JobStatusNotFoundException,
     RequestSubmissionException,
 )
-from app.uniprot.schema import AccessionListRequest, UniprotSummary
-from app.uniprot.uniprot import get_list_of_uniprot_summary_helper
+from app.uniprot.schema import AccessionListRequest
 from app.utils import request_get, request_post
 
 
@@ -91,7 +90,7 @@ async def submit_sequence_search_job(sequence: str) -> str:
     raise RequestSubmissionException("Request submission failed!")
 
 
-async def get_job_id(seq_hash: str) -> str:
+async def get_job_id_from_cache(seq_hash: str) -> str:
     """Get the job id from the cache.
 
     Args:
@@ -219,27 +218,3 @@ def prepare_paginated_accessions(hit_dictionary: Dict, page_num: int) -> List[st
     return accessions[
         page_num * MAX_POST_LIMIT : (page_num * MAX_POST_LIMIT) + MAX_POST_LIMIT
     ]
-
-
-async def prepare_dictionary_of_summary_results(accessions: List[str]) -> Dict:
-    """Prepare a dictionary of summary results.
-
-    Args:
-        accessions (List[str]): A list of accessions
-
-    Returns:
-        Dict: A dictionary of summary results
-    """
-    result_dict: Dict[str, UniprotSummary] = {k: None for k in accessions}
-    accession_obj_list = prepare_accession_list(accessions)
-    summary_results: List[UniprotSummary] = await get_list_of_uniprot_summary_helper(
-        accession_obj_list
-    )
-
-    if not summary_results:
-        return {}
-
-    for x in summary_results:
-        result_dict[x.uniprot_entry.ac] = x
-
-    return result_dict
