@@ -8,6 +8,12 @@ from app.uniprot.schema import UniprotSummary
 from tests.utils import StubResponse
 
 
+class AsyncResult:
+    def __init__(self, status, result):
+        self.result = result
+        self.status = status
+
+
 @pytest.fixture(scope="session")
 def invalid_uniprot():
     return "X0"
@@ -75,3 +81,30 @@ def uniprot_summary_obj_list():
             summary_results.append(UniprotSummary(**item))
 
     return summary_results
+
+
+@pytest.fixture(scope="session")
+def uniprot_details():
+    with open("tests/stubs/uniprot.json") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="session")
+def uniprot_summary():
+    with open("tests/stubs/uniprot_summary.json") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="session")
+def pending_async_result():
+    return AsyncResult("PENDING", None)
+
+
+@pytest.fixture(scope="session")
+def failed_async_result():
+    return AsyncResult("FAILURE", None)
+
+
+@pytest.fixture(scope="session")
+def finished_none_async_result():
+    return AsyncResult("SUCCESS", None)

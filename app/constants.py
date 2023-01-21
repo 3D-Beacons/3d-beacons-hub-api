@@ -8,3 +8,13 @@ TEMPLATE_DESC = (
 )
 UNP_CHECKSUM_DESC = "CRC64 checksum of the UniProt sequence"
 ENSEMBL_QUAL_DESC = "Ensembl identifier."
+
+# RESPONSE MESSAGES
+NO_JOB_FOUND_MESSAGE = (
+    "No search job found for the given sequence, please submit the job again!"
+)
+SEARCH_IN_PROGRESS_MESSAGE = "Search in progress, please try after sometime!"
+JOB_SUBMISSION_ERROR_MESSAGE = "Error in submitting the job, please retry!"
+JOB_FAILED_ERROR_MESSAGE = (
+    "Failed to process the search request, please submit the sequence again!"
+)

@@ -11,18 +11,16 @@ client = TestClient(app)
 
 # Using 'with TestClient' to test the startup and shutdown events
 @pytest.mark.asyncio
-async def test_get_uniprot_api(
-    mocker, valid_uniprot, valid_uniprot_structures, registry
-):
+async def test_get_uniprot_api(mocker, valid_uniprot, uniprot_details, registry):
     async with TestClient(app) as client:
         future = asyncio.Future()
-        future.set_result(valid_uniprot_structures)
+        future.set_result(uniprot_details)
         mocker.patch(
-            "app.uniprot.uniprot.get_services", return_value=registry["services"]
+            "app.uniprot.helper.get_services", return_value=registry["services"]
         )
-        mocker.patch("app.uniprot.uniprot.send_async_requests", return_value=future)
+        mocker.patch("app.uniprot.uniprot.get_uniprot_helper", return_value=future)
         mocker.patch(
-            "app.uniprot.uniprot.get_base_service_url", return_value="http://test"
+            "app.uniprot.helper.get_base_service_url", return_value="http://test"
         )
         response = await client.get(f"/uniprot/{valid_uniprot}.json")
         assert response.status_code == status.HTTP_200_OK
@@ -30,26 +28,26 @@ async def test_get_uniprot_api(
 
 @pytest.mark.asyncio
 async def test_get_uniprot_summary_api(
-    mocker, valid_uniprot, valid_uniprot_structures_summary, registry
+    mocker, valid_uniprot, uniprot_summary, registry
 ):
     future = asyncio.Future()
-    future.set_result(valid_uniprot_structures_summary)
-    mocker.patch("app.uniprot.uniprot.get_services", return_value=registry["services"])
-    mocker.patch("app.uniprot.uniprot.send_async_requests", return_value=future)
-    mocker.patch("app.uniprot.uniprot.get_base_service_url", return_value="http://test")
+    future.set_result(uniprot_summary)
+    mocker.patch("app.uniprot.helper.get_services", return_value=registry["services"])
+    mocker.patch("app.uniprot.uniprot.get_uniprot_summary_helper", return_value=future)
+    mocker.patch("app.uniprot.helper.get_base_service_url", return_value="http://test")
     response = await client.get(f"/uniprot/summary/{valid_uniprot}.json")
     assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.asyncio
-async def test_get_uniprot_summaries_api(
-    mocker, valid_uniprot_structures_summary, registry
-):
+async def test_get_uniprot_summaries_api(mocker, uniprot_summary_obj_list, registry):
     future = asyncio.Future()
-    future.set_result(valid_uniprot_structures_summary)
-    mocker.patch("app.uniprot.uniprot.get_services", return_value=registry["services"])
-    mocker.patch("app.uniprot.uniprot.send_async_requests", return_value=future)
-    mocker.patch("app.uniprot.uniprot.get_base_service_url", return_value="http://test")
+    future.set_result(uniprot_summary_obj_list)
+    mocker.patch("app.uniprot.helper.get_services", return_value=registry["services"])
+    mocker.patch(
+        "app.uniprot.uniprot.get_list_of_uniprot_summary_helper", return_value=future
+    )
+    mocker.patch("app.uniprot.helper.get_base_service_url", return_value="http://test")
     response = await client.post(
         "/uniprot/summary", json={"accessions": ["P12345", "P23456"]}
     )

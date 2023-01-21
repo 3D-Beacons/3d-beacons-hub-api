@@ -2,6 +2,12 @@ from typing import List
 
 from pydantic import BaseModel
 
+from app.constants import (
+    JOB_FAILED_ERROR_MESSAGE,
+    JOB_SUBMISSION_ERROR_MESSAGE,
+    NO_JOB_FOUND_MESSAGE,
+    SEARCH_IN_PROGRESS_MESSAGE,
+)
 from app.uniprot.schema import UniprotSummary
 
 
@@ -9,8 +15,8 @@ class Sequence(BaseModel):
     sequence: str
 
 
-class ErrorMessage(BaseModel):
-    message: str = "Error in submitting the job, please retry!"
+class JobSubmissionErrorMessage(BaseModel):
+    message: str = JOB_SUBMISSION_ERROR_MESSAGE
 
 
 class SearchSuccessMessage(BaseModel):
@@ -18,11 +24,15 @@ class SearchSuccessMessage(BaseModel):
 
 
 class SearchInProgressMessage(BaseModel):
-    message: str = "Search in progress, please try after sometime!"
+    message: str = SEARCH_IN_PROGRESS_MESSAGE
 
 
 class NoJobFoundMessage(BaseModel):
-    message: str = "No job found for the given sequence, please submit the job again!"
+    message: str = NO_JOB_FOUND_MESSAGE
+
+
+class JobFailedErrorMessage(BaseModel):
+    message: str = JOB_FAILED_ERROR_MESSAGE
 
 
 class HSPS(BaseModel):

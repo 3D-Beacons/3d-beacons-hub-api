@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    command: uvicorn app.app:app --host 0.0.0.0 --port 8000
+    environment:
+      - ENVIRONMENT=DEV
+      - DEBUG=1
+      - REDIS_URL=redis://redis:6379
+      - MAX_POST_LIMIT=10
+    depends_on:
+      - redis
+
+  worker:
+    build: .
+    command: celery -A worker.worker worker --loglevel=INFO
+    volumes:
+      - ./app:/app
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
+      - MAX_POST_LIMIT=10
+      - BEACONS_API_URL=http://web:8000
+    depends_on:
+      - redis
+      - web
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  dashboard:
+    build: .
+    command: celery flower -A worker.worker --port=5555
+    ports:
+      - 5555:5555
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
+    depends_on:
+      - web
+      - redis
+      - worker
