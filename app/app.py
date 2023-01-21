@@ -21,6 +21,7 @@ instrumentator = Instrumentator(
     env_var_name="ENABLE_METRICS",
 )
 
+
 app = FastAPI(
     docs_url="/",
     title="3D Beacons HUB API",
@@ -63,8 +64,8 @@ async def load_configs():
     from app.cache.redis_cache import RedisCache
     from app.config import load_data_file
 
+    RedisCache.init_redis(REDIS_URL, "utf-8")
     load_data_file()
-    RedisCache.init_redis(REDIS_URL, "utf8")
 
 
 @app.on_event("shutdown")

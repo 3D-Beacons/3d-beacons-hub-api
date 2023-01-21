@@ -8,8 +8,8 @@ from starlette.responses import JSONResponse
 from app.config import GIFTS_API, get_services
 from app.constants import ENSEMBL_QUAL_DESC
 from app.ensembl.schema import EnsemblSummary
+from app.uniprot.helper import get_list_of_uniprot_summary_helper
 from app.uniprot.schema import AccessionListRequest
-from app.uniprot.uniprot import get_list_of_uniprot_summary_helper
 from app.utils import clean_args, request_get
 
 ensembl_route = APIRouter()
