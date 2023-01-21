@@ -90,23 +90,27 @@ def prepare_accession_list(accession_list: List) -> AccessionListRequest:
 
 def prepare_hit_dictionary_with_summary_results(hit_dictionary: Dict):
     final_hit_dictionary = {}
-    for accessions_batch in divide_chunks(list(hit_dictionary.keys()), MAX_POST_LIMIT):
-        summary_response = requests.post(
-            f"{BEACONS_API_URL}/uniprot/summary", json={"accessions": accessions_batch}
-        )
-
-        if (
-            summary_response
-            and summary_response.status_code == 200
-            and summary_response.json()
+    with requests.Session() as session:
+        for accessions_batch in divide_chunks(
+            list(hit_dictionary.keys()), MAX_POST_LIMIT
         ):
-            for result in summary_response.json():
-                accession = result["uniprot_entry"]["ac"]
-                accession_record = hit_dictionary[accession]
-                accession_record.update({"summary": result})
-                final_hit_dictionary.update({accession: accession_record})
-        else:
-            return None
+            summary_response = session.post(
+                f"{BEACONS_API_URL}/uniprot/summary",
+                json={"accessions": accessions_batch},
+            )
+
+            if (
+                summary_response
+                and summary_response.status_code == 200
+                and summary_response.json()
+            ):
+                for result in summary_response.json():
+                    accession = result["uniprot_entry"]["ac"]
+                    accession_record = hit_dictionary[accession]
+                    accession_record.update({"summary": result})
+                    final_hit_dictionary.update({accession: accession_record})
+            else:
+                return None
 
     return final_hit_dictionary
 
