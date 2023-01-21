@@ -2,6 +2,7 @@ import os
 from typing import Dict, List
 
 import requests
+
 from worker.schema import AccessionListRequest
 
 MAX_POST_LIMIT = int(os.environ.get("MAX_POST_LIMIT", 10))
