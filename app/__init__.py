@@ -11,4 +11,4 @@ logger = logging.getLogger(__name__)
 if os.getenv("DEBUG"):
     logger.setLevel(logging.DEBUG)
 
-REDIS_URL = os.environ.get("REDIS_URL", "localhost:6379")
+REDIS_URL = os.environ.get("REDIS_URL")
