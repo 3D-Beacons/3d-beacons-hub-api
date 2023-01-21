@@ -2,15 +2,15 @@ import json
 
 import pytest
 
-from app.worker.helper import (
+from tests.utils import StubHttpResponse
+from worker.helper import (
     JobResultsNotFoundException,
     filter_json_results,
     get_job_dispatcher_json_results,
     prepare_accession_list,
     prepare_hit_dictionary,
 )
-from app.worker.schema import AccessionListRequest
-from tests.utils import StubHttpResponse
+from worker.schema import AccessionListRequest
 
 
 def test_prepare_accession_list():
@@ -41,7 +41,7 @@ def test_prepare_hit_dictionary(seq_search_response):
 @pytest.mark.asyncio
 async def test_get_job_dispatcher_json_results_valid(mocker, sample_sequence_hash):
     mocker.patch(
-        "app.worker.helper.requests.get",
+        "worker.helper.requests.get",
         return_value=StubHttpResponse(status_code=200, data={"results": "results"}),
     )
 
@@ -53,7 +53,7 @@ async def test_get_job_dispatcher_json_results_valid(mocker, sample_sequence_has
 @pytest.mark.asyncio
 async def test_get_job_dispatcher_json_results_invalid(mocker, sample_sequence_hash):
 
-    mocker.patch("app.worker.helper.requests.get", return_value=None)
+    mocker.patch("worker.helper.requests.get", return_value=None)
 
     with pytest.raises(JobResultsNotFoundException):
         assert get_job_dispatcher_json_results(sample_sequence_hash)

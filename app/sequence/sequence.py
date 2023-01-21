@@ -12,7 +12,6 @@ from starlette.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
 )
-from worker.worker import retrieve_result
 
 from app import logger
 from app.cache.redis_cache import RedisCache
@@ -36,6 +35,7 @@ from app.sequence.schema import (
     SearchSuccessMessage,
     Sequence,
 )
+from worker.worker import retrieve_result
 
 sequence_route = APIRouter()
 

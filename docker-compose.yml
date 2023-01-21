@@ -11,6 +11,8 @@ services:
       - DEBUG=1
       - REDIS_URL=redis://redis:6379
       - MAX_POST_LIMIT=10
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
     depends_on:
       - redis
 
@@ -18,7 +20,7 @@ services:
     build: .
     command: celery -A worker.worker worker --loglevel=INFO
     volumes:
-      - ./app:/app
+      - ./worker:/worker
     environment:
       - CELERY_BROKER_URL=redis://redis:6379
       - CELERY_RESULT_BACKEND=redis://redis:6379
@@ -35,7 +37,7 @@ services:
 
   dashboard:
     build: .
-    command: celery flower -A worker.worker --port=5555
+    command: celery flower -A worker --port=5555
     ports:
       - 5555:5555
     environment:
