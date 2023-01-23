@@ -17,12 +17,12 @@ CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://redis:6379")
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://redis:6379")
 celery = Celery("worker", backend=CELERY_RESULT_BACKEND, broker=CELERY_BROKER_URL)
 redis_cache = redis.Redis.from_url(CELERY_RESULT_BACKEND)
+MAX_WAIT_TIME = int(os.environ.get("MAX_WAIT_TIME", 600))
+SLEEP_TIME = int(os.environ.get("SLEEP_TIME", 60))
 
 
-@celery.task
+@celery.task(time_limit=MAX_WAIT_TIME, soft_time_limit=MAX_WAIT_TIME - SLEEP_TIME)
 def retrieve_result(job_id: str, hashed_sequence: str):
-    MAX_WAIT_TIME = 300
-    SLEEP_TIME = 60
     waited_time = 0
 
     while True:
