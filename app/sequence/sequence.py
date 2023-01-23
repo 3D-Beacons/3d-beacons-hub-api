@@ -17,7 +17,6 @@ from app.cache.redis_cache import RedisCache
 from app.constants import (
     JOB_FAILED_ERROR_MESSAGE,
     JOB_SUBMISSION_ERROR_MESSAGE,
-    NO_JOB_FOUND_MESSAGE,
     SEARCH_IN_PROGRESS_MESSAGE,
 )
 from app.exception import (
@@ -25,7 +24,11 @@ from app.exception import (
     JobResultsNotFoundException,
     RequestSubmissionException,
 )
-from app.sequence.helper import generate_hash, submit_sequence_search_job
+from app.sequence.helper import (
+    generate_hash,
+    handle_no_job_error,
+    submit_sequence_search_job,
+)
 from app.sequence.schema import (
     JobSubmissionErrorMessage,
     NoJobFoundMessage,
@@ -74,10 +77,11 @@ async def search(sequence: Sequence):
     logger.debug(f"Sequence {sequence.sequence} submitted to search engine")
     packed_response = msgpack.dumps(jsonable_encoder(job_id))
 
+    await RedisCache.hset("sequence", hashed_sequence, packed_response)
+
     # submit the task to celery
     result_task = retrieve_result.delay(job_id, hashed_sequence)
 
-    await RedisCache.hset("sequence", hashed_sequence, packed_response)
     await RedisCache.hset("job-queue", hashed_sequence, result_task.id)
 
     return JSONResponse(
@@ -100,20 +104,14 @@ async def search(sequence: Sequence):
 async def result(
     job_id: str,
 ):
+    celery_job_id = None
     try:
         celery_job_id = await RedisCache.hget("job-queue", job_id)
         if not celery_job_id:
-            await RedisCache.hdel("sequence", job_id)
-            return JSONResponse(
-                status_code=HTTP_400_BAD_REQUEST,
-                content={"message": NO_JOB_FOUND_MESSAGE},
-            )
+            return await handle_no_job_error(job_id)
 
     except JobNotFoundException:
-        return JSONResponse(
-            status_code=HTTP_400_BAD_REQUEST,
-            content={"message": NO_JOB_FOUND_MESSAGE},
-        )
+        return await handle_no_job_error(job_id)
 
     try:
         celery_job = AsyncResult(celery_job_id)
@@ -143,7 +141,4 @@ async def result(
             )
 
     except JobResultsNotFoundException:
-        return JSONResponse(
-            status_code=HTTP_400_BAD_REQUEST,
-            content={"message": NO_JOB_FOUND_MESSAGE},
-        )
+        return await handle_no_job_error(job_id)

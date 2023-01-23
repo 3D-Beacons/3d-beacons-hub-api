@@ -1,7 +1,10 @@
 import hashlib
 
-from starlette.status import HTTP_200_OK
+from starlette.responses import JSONResponse
+from starlette.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 
+from app.cache.redis_cache import RedisCache
+from app.constants import NO_JOB_FOUND_MESSAGE
 from app.exception import RequestSubmissionException
 from app.utils import request_post
 
@@ -38,3 +41,11 @@ async def submit_sequence_search_job(sequence: str) -> str:
     except Exception:
         pass
     raise RequestSubmissionException("Request submission failed!")
+
+
+async def handle_no_job_error(job_id: str):
+    await RedisCache.hdel("sequence", job_id)
+    return JSONResponse(
+        status_code=HTTP_400_BAD_REQUEST,
+        content={"message": NO_JOB_FOUND_MESSAGE},
+    )

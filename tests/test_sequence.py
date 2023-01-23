@@ -50,6 +50,8 @@ async def test_result_api_no_job_id(
         "app.sequence.sequence.RedisCache.hget", side_effect=JobNotFoundException
     )
 
+    mocker.patch("app.sequence.sequence.RedisCache.hdel", return_value=future)
+
     response = await client.get(
         "/sequence/result?job_id=ncbiblast-2021-01-01-12-12-12",
     )
@@ -66,6 +68,8 @@ async def test_result_api_valid_job_id_and_issue_in_celery_job(
     future = asyncio.Future()
     future.set_result(msgpack.dumps("ncbiblast-2021-01-01-12-12-12"))
     mocker.patch("app.sequence.sequence.RedisCache.hget", return_value=future)
+
+    mocker.patch("app.sequence.sequence.RedisCache.hdel", return_value=future)
 
     mocker.patch(
         "app.sequence.sequence.AsyncResult",

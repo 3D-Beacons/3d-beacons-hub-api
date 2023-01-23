@@ -37,7 +37,7 @@ services:
 
   dashboard:
     build: .
-    command: celery flower -A worker.worker --port=5555
+    command: celery -A worker.worker flower --port=5555 --persistent=True
     ports:
       - 5555:5555
     environment:
