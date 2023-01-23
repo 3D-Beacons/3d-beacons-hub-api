@@ -11,3 +11,4 @@ celery==5.2.7
 redis==4.4.2
 flower==1.2.0
 importlib-metadata==4.13.0
+eventlet==0.33.3

@@ -2,7 +2,6 @@ from typing import List
 
 import msgpack
 from celery.result import AsyncResult
-from fastapi.background import BackgroundTasks
 from fastapi.encoders import jsonable_encoder
 from fastapi.routing import APIRouter
 from starlette.responses import JSONResponse
@@ -51,7 +50,7 @@ sequence_route = APIRouter()
     },
     tags=["Sequence"],
 )
-async def search(sequence: Sequence, background_tasks: BackgroundTasks):
+async def search(sequence: Sequence):
     hashed_sequence = generate_hash(sequence.sequence)
 
     try:
@@ -78,12 +77,8 @@ async def search(sequence: Sequence, background_tasks: BackgroundTasks):
     # submit the task to celery
     result_task = retrieve_result.delay(job_id, hashed_sequence)
 
-    background_tasks.add_task(
-        RedisCache.hset, "sequence", hashed_sequence, packed_response
-    )
-    background_tasks.add_task(
-        RedisCache.hset, "job-queue", hashed_sequence, result_task.id
-    )
+    await RedisCache.hset("sequence", hashed_sequence, packed_response)
+    await RedisCache.hset("job-queue", hashed_sequence, result_task.id)
 
     return JSONResponse(
         status_code=HTTP_202_ACCEPTED,
