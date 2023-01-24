@@ -101,6 +101,9 @@ async def get_uniprot_summary_helper(
         x.json() for x in result if x and x.status_code == status.HTTP_200_OK
     ]
 
+    # filter out beacons results where there are no structures
+    final_result = list(filter(lambda x: x.get("structures"), final_result))
+
     if uniprot_checksum:
         final_result = filter_on_checksum(final_result, uniprot_checksum)
 
