@@ -87,6 +87,10 @@ async def get_uniprot_summary(
 
     result = await send_async_requests(calls)
     final_result = [x.json() for x in result if x and x.status_code == 200]
+
+    # filter out beacons results where there are no structures
+    final_result = list(filter(lambda x: x.get("structures"), final_result))
+
     if not final_result:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
 
@@ -106,6 +110,7 @@ async def get_uniprot_summary(
                     f"{provider} returned an erroneous response for {qualifier}"
                 )
         except Exception:
+            logger.warning(f"{item} invalid for {qualifier}")
             final_structures = None
 
     if not final_structures:
@@ -175,6 +180,9 @@ async def get_uniprot(
     result = await send_async_requests(calls)
     final_result = [x.json() for x in result if x and x.status_code == 200]
 
+    # filter out beacons results where there are no structures
+    final_result = list(filter(lambda x: x.get("structures"), final_result))
+
     if not final_result:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
 
@@ -194,6 +202,7 @@ async def get_uniprot(
                     f"{provider} returned an erroneous response for {qualifier}"
                 )
         except Exception:
+            logger.warning(f"{item} invalid for {qualifier}")
             final_structures = None
 
     if not final_structures:
