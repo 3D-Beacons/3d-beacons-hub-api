@@ -50,6 +50,11 @@ def retrieve_result(job_id: str, hashed_sequence: str):
             final_hit_dictionary = prepare_hit_dictionary_with_summary_results(
                 hit_dictionary
             )
+
+            if all(not x.get("summary") for x in final_hit_dictionary.values()):
+                redis_cache.hdel("sequence", hashed_sequence)
+                return None
+
             return final_hit_dictionary
 
         elif job_status == "NOT_FOUND":

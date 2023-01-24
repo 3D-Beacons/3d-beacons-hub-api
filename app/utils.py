@@ -5,7 +5,6 @@ import re
 import httpx
 
 from app import logger
-from app.exception import RequestSubmissionException, RequestTimeoutException
 from app.version import __version__
 
 REQUEST_TIMEOUT = 5
@@ -25,10 +24,10 @@ async def request_get(url: str):
             return await client.get(url, timeout=REQUEST_TIMEOUT)
         except (httpx.ReadTimeout, httpx.ConnectTimeout):
             logger.error(f"Timeout for {url}")
-            raise RequestTimeoutException("Request timeout!")
+            # raise RequestTimeoutException("Request timeout!")
         except httpx.HTTPError:
             logger.error(f"Error for {url}")
-            raise RequestSubmissionException("Request submission error!")
+            # raise RequestSubmissionException("Request submission error!")
 
 
 async def request_post(url: str, data):
@@ -37,10 +36,10 @@ async def request_post(url: str, data):
             return await client.post(url, timeout=REQUEST_TIMEOUT, data=data)
         except (httpx.ReadTimeout, httpx.ConnectTimeout):
             logger.error(f"Timeout for {url}")
-            raise RequestTimeoutException("Request timeout!")
+            # raise RequestTimeoutException("Request timeout!")
         except httpx.HTTPError:
             logger.error(f"Error for {url}")
-            raise RequestSubmissionException("Request submission error!")
+            # raise RequestSubmissionException("Request submission error!")
 
 
 async def send_async_requests(endpoints):
