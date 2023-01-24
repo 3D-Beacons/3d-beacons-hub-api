@@ -109,8 +109,6 @@ def prepare_hit_dictionary_with_summary_results(hit_dictionary: Dict):
                     accession_record = hit_dictionary[accession]
                     accession_record.update({"summary": result})
                     final_hit_dictionary.update({accession: accession_record})
-            else:
-                return None
 
     return final_hit_dictionary
 

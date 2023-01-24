@@ -10,3 +10,5 @@ htmlcov
 temp/
 run.sh
 .mypy_cache
+
+k8s/
