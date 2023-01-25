@@ -1,8 +1,6 @@
 from typing import List
 
-import msgpack
 from celery.result import AsyncResult
-from fastapi.encoders import jsonable_encoder
 from fastapi.routing import APIRouter
 from starlette.responses import JSONResponse
 from starlette.status import (
@@ -75,9 +73,8 @@ async def search(sequence: Sequence):
         )
 
     logger.debug(f"Sequence {sequence.sequence} submitted to search engine")
-    packed_response = msgpack.dumps(jsonable_encoder(job_id))
 
-    await RedisCache.hset("sequence", hashed_sequence, packed_response)
+    await RedisCache.hset("sequence", hashed_sequence, job_id)
 
     # submit the task to celery
     result_task = retrieve_result.delay(job_id, hashed_sequence)
