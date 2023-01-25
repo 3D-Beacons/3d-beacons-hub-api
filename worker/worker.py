@@ -2,7 +2,8 @@ import os
 import time
 
 import redis
-from celery import Celery
+from celery import Celery, current_task
+from celery.app import trace
 
 from worker.helper import (
     JobStatusNotFoundException,
@@ -16,9 +17,13 @@ from worker.helper import (
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://redis:6379")
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://redis:6379")
 celery = Celery("worker", backend=CELERY_RESULT_BACKEND, broker=CELERY_BROKER_URL)
-redis_cache = redis.Redis.from_url(CELERY_RESULT_BACKEND)
+redis_cache = redis.Redis.from_url(CELERY_RESULT_BACKEND, decode_responses=True)
 MAX_WAIT_TIME = int(os.environ.get("MAX_WAIT_TIME", 600))
 SLEEP_TIME = int(os.environ.get("SLEEP_TIME", 60))
+
+trace.LOG_SUCCESS = """\
+Task %(name)s[%(id)s] succeeded in %(runtime)ss\
+"""
 
 
 @celery.task(time_limit=MAX_WAIT_TIME, soft_time_limit=MAX_WAIT_TIME - SLEEP_TIME)
@@ -26,6 +31,11 @@ def retrieve_result(job_id: str, hashed_sequence: str):
     waited_time = 0
 
     while True:
+        existing_job = redis_cache.hget("job-queue", hashed_sequence)
+
+        if existing_job and current_task.request.id != existing_job:
+            return None
+
         if waited_time > MAX_WAIT_TIME:
             redis_cache.hdel("sequence", hashed_sequence)
             break

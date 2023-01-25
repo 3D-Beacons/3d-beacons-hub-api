@@ -10,7 +10,9 @@ class RedisCache:
     def init_redis(cls, url: str, encoding: str):
         if cls.redis_client is None:
             cls.redis_client = Redis.from_url(
-                f"redis://{url}", encoding=encoding, decode_responses=False
+                f"redis://{url}",
+                encoding=encoding,
+                decode_responses=True,
             )
 
     @classmethod
