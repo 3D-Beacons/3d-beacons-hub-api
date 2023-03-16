@@ -21,23 +21,19 @@ async def request_get(url: str):
     """
     try:
         return await httpx_async_client.get(url, timeout=REQUEST_TIMEOUT)
-    except (httpx.ReadTimeout, httpx.ConnectTimeout):
+    except httpx.TimeoutException:
         logger.error(f"Timeout for {url}")
-        # raise RequestTimeoutException("Request timeout!")
     except httpx.HTTPError:
-        logger.error(f"Error for {url}")
-        # raise RequestSubmissionException("Request submission error!")
+        logger.error(f"Error while making a request to {url}", exc_info=True)
 
 
 async def request_post(url: str, data):
     try:
         return await httpx_async_client.post(url, timeout=REQUEST_TIMEOUT, data=data)
-    except (httpx.ReadTimeout, httpx.ConnectTimeout):
+    except httpx.TimeoutException:
         logger.error(f"Timeout for {url}")
-        # raise RequestTimeoutException("Request timeout!")
     except httpx.HTTPError:
-        logger.error(f"Error for {url}")
-        # raise RequestSubmissionException("Request submission error!")
+        logger.error(f"Error while making a request to {url}", exc_info=True)
 
 
 async def send_async_requests(endpoints):
