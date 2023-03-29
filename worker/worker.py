@@ -14,7 +14,7 @@ from worker.helper import (
     prepare_hit_dictionary_with_summary_results,
 )
 
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://redis:6379")
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "amqp://broker:5672")
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://redis:6379")
 celery = Celery("worker", backend=CELERY_RESULT_BACKEND, broker=CELERY_BROKER_URL)
 redis_cache = redis.Redis.from_url(CELERY_RESULT_BACKEND, decode_responses=True)

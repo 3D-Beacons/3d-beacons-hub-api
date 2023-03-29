@@ -11,39 +11,57 @@ services:
       - DEBUG=1
       - REDIS_URL=redis://redis:6379
       - MAX_POST_LIMIT=10
-      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_BROKER_URL=amqp://broker:5672
       - CELERY_RESULT_BACKEND=redis://redis:6379
     depends_on:
       - redis
+      - worker
+      - broker
 
   worker:
     build: .
-    command: celery -A worker.worker worker -l info -n worker.worker --task-events --without-gossip --without-mingle --without-heartbeat -Ofair -P eventlet -c 1000
+    command: celery -A worker.worker worker -l info -n worker.worker
     volumes:
       - ./worker:/worker
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_BROKER_URL=amqp://broker:5672
       - CELERY_RESULT_BACKEND=redis://redis:6379
       - MAX_POST_LIMIT=5
       - BEACONS_API_URL=http://web:8000
     depends_on:
       - redis
-      - web
+      - broker
 
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
+    volumes:
+      - ./redis_data:/data
+
+
+  broker:
+    image: rabbitmq:3-management
+    ports:
+      # used by celery
+      - 5672:5672
+      # used for dashboard
+      - 15672:15672
+    volumes:
+      - ./rabbitmq_data:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
 
   dashboard:
-    build: .
-    command: celery -A worker.worker flower --port=5555 --persistent=True
+    image: mher/flower
     ports:
       - 5555:5555
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_BROKER_URL=amqp://guest:guest@broker:5672
       - CELERY_RESULT_BACKEND=redis://redis:6379
-    depends_on:
-      - web
-      - redis
-      - worker
+      - FLOWER_BROKER_API=http://guest:guest@broker:15672/api/
+
+volumes:
+  redis_data:
+  rabbitmq_data:
