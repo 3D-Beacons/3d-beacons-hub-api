@@ -12,3 +12,5 @@ run.sh
 .mypy_cache
 
 k8s/
+rabbitmq_data/
+redis_data/
