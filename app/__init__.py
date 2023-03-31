@@ -11,4 +11,4 @@ httpx_async_client = httpx.AsyncClient()
 if os.getenv("DEBUG"):
     logger.setLevel(logging.DEBUG)
 
-REDIS_URL = os.environ.get("REDIS_URL")
+REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/1")

@@ -15,9 +15,10 @@ from worker.helper import (
 )
 
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "amqp://broker:5672")
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://redis:6379")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://redis:6379/0")
+REDIS_URL = os.environ.get("REDIS_URL", "redis://redis:6379/1")
 celery = Celery("worker", backend=CELERY_RESULT_BACKEND, broker=CELERY_BROKER_URL)
-redis_cache = redis.Redis.from_url(CELERY_RESULT_BACKEND, decode_responses=True)
+redis_cache = redis.Redis.from_url(REDIS_URL, decode_responses=True)
 MAX_WAIT_TIME = int(os.environ.get("MAX_WAIT_TIME", 600))
 SLEEP_TIME = int(os.environ.get("SLEEP_TIME", 60))
 

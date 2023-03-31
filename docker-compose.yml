@@ -9,10 +9,10 @@ services:
     environment:
       - ENVIRONMENT=DEV
       - DEBUG=1
-      - REDIS_URL=redis://redis:6379
+      - REDIS_URL=redis://redis:6379/1
       - MAX_POST_LIMIT=10
       - CELERY_BROKER_URL=amqp://broker:5672
-      - CELERY_RESULT_BACKEND=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     depends_on:
       - redis
       - worker
@@ -25,7 +25,7 @@ services:
       - ./worker:/worker
     environment:
       - CELERY_BROKER_URL=amqp://broker:5672
-      - CELERY_RESULT_BACKEND=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - MAX_POST_LIMIT=5
       - BEACONS_API_URL=http://web:8000
     depends_on:
@@ -59,7 +59,7 @@ services:
       - 5555:5555
     environment:
       - CELERY_BROKER_URL=amqp://guest:guest@broker:5672
-      - CELERY_RESULT_BACKEND=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - FLOWER_BROKER_API=http://guest:guest@broker:15672/api/
 
 volumes:
