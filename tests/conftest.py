@@ -13,6 +13,9 @@ class AsyncResult:
         self.result = result
         self.status = status
 
+    def get(self):
+        return self.result
+
 
 @pytest.fixture(scope="session")
 def invalid_uniprot():

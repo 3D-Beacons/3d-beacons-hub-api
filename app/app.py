@@ -61,8 +61,8 @@ async def add_extra_headers(request: Request, call_next):
 
 @app.on_event("startup")
 async def load_configs():
-    from app.cache.redis_cache import RedisCache
     from app.config import load_data_file
+    from worker.cache.redis_cache import RedisCache
 
     RedisCache.init_redis(REDIS_URL, "utf-8")
     load_data_file()

@@ -11,11 +11,7 @@ from app.constants import (
     NO_JOB_FOUND_MESSAGE,
     SEARCH_IN_PROGRESS_MESSAGE,
 )
-from app.exception import (
-    JobNotFoundException,
-    JobResultsNotFoundException,
-    RequestSubmissionException,
-)
+from app.exception import RequestSubmissionException
 from app.sequence.helper import submit_sequence_search_job
 from tests.utils import StubHttpResponse
 
@@ -29,9 +25,9 @@ async def test_search_job_id_from_cache(
     sample_sequence_hash,
 ):
 
-    future = asyncio.Future()
-    future.set_result("job_12jkjskjk")
-    mocker.patch("app.sequence.sequence.RedisCache.hget", return_value=future)
+    mocker.patch(
+        "app.sequence.sequence.get_jobdispatcher_id", return_value="non-existing-job-id"
+    )
 
     response = await client.post("/sequence/search", json={"sequence": sample_sequence})
 
@@ -43,19 +39,14 @@ async def test_search_job_id_from_cache(
 async def test_result_api_no_job_id(
     mocker,
 ):
-
-    future = asyncio.Future()
-    future.set_result(None)
-    mocker.patch(
-        "app.sequence.sequence.RedisCache.hget", side_effect=JobNotFoundException
-    )
-
-    mocker.patch("app.sequence.sequence.RedisCache.hdel", return_value=future)
+    mocker.patch("app.sequence.sequence.get_celery_task_id", return_value=None)
+    clear_mock = mocker.patch("app.sequence.helper.clear_jobdispatcher_id")
 
     response = await client.get(
         "/sequence/result?job_id=ncbiblast-2021-01-01-12-12-12",
     )
 
+    clear_mock.assert_called_once()
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json() == {"message": NO_JOB_FOUND_MESSAGE}
 
@@ -63,33 +54,31 @@ async def test_result_api_no_job_id(
 @pytest.mark.asyncio
 async def test_result_api_valid_job_id_and_issue_in_celery_job(
     mocker,
+    failed_async_result,
 ):
-
-    future = asyncio.Future()
-    future.set_result(msgpack.dumps("ncbiblast-2021-01-01-12-12-12"))
-    mocker.patch("app.sequence.sequence.RedisCache.hget", return_value=future)
-
-    mocker.patch("app.sequence.sequence.RedisCache.hdel", return_value=future)
-
     mocker.patch(
-        "app.sequence.sequence.AsyncResult",
-        side_effect=JobResultsNotFoundException,
+        "app.sequence.sequence.get_celery_task_id", return_value="valid-job-id"
     )
+    mocker.patch("app.sequence.sequence.AsyncResult", return_value=failed_async_result)
+    clear_mock_one = mocker.patch("app.sequence.sequence.clear_jobdispatcher_id")
+    clear_mock_two = mocker.patch("app.sequence.sequence.clear_celery_task_id")
 
     response = await client.get(
         "/sequence/result?job_id=ncbiblast-2021-01-01-12-12-12",
     )
 
+    clear_mock_one.assert_called_once()
+    clear_mock_two.assert_called_once()
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {"message": NO_JOB_FOUND_MESSAGE}
+    assert response.json() == {"message": JOB_FAILED_ERROR_MESSAGE}
 
 
 @pytest.mark.asyncio
 async def test_result_api_valid_job_id_and_job_pending(mocker, pending_async_result):
 
-    future = asyncio.Future()
-    future.set_result(msgpack.dumps("ncbiblast-2021-01-01-12-12-12"))
-    mocker.patch("app.sequence.sequence.RedisCache.hget", return_value=future)
+    mocker.patch(
+        "app.sequence.sequence.get_celery_task_id", return_value="valid-job-id"
+    )
 
     mocker.patch("app.sequence.sequence.AsyncResult", return_value=pending_async_result)
 
@@ -102,38 +91,6 @@ async def test_result_api_valid_job_id_and_job_pending(mocker, pending_async_res
 
 
 @pytest.mark.asyncio
-async def test_result_api_valid_job_id_and_job_not_found(
-    mocker,
-    failed_async_result,
-):
-
-    future = asyncio.Future()
-    future.set_result(msgpack.dumps("ncbiblast-2021-01-01-12-12-12"))
-    mocker.patch("app.sequence.sequence.RedisCache.hget", return_value=future)
-
-    mocker.patch(
-        "app.sequence.sequence.AsyncResult",
-        return_value=failed_async_result,
-    )
-
-    delete_future = asyncio.Future()
-    delete_future.set_result(None)
-    delete_mock = mocker.patch(
-        "app.sequence.sequence.RedisCache.hdel", return_value=delete_future
-    )
-
-    response = await client.get(
-        "/sequence/result?job_id=ncbiblast-2021-01-01-12-12-12",
-    )
-
-    # must be called twice
-    delete_mock.call_count == 2
-
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {"message": JOB_FAILED_ERROR_MESSAGE}
-
-
-@pytest.mark.asyncio
 async def test_result_api_valid_job_id_and_job_finished(
     mocker,
     finished_none_async_result,
@@ -141,7 +98,9 @@ async def test_result_api_valid_job_id_and_job_finished(
 
     future = asyncio.Future()
     future.set_result(msgpack.dumps("ncbiblast-2021-01-01-12-12-12"))
-    mocker.patch("app.sequence.sequence.RedisCache.hget", return_value=future)
+    mocker.patch(
+        "app.sequence.sequence.get_celery_task_id", return_value="valid-job-id"
+    )
 
     mocker.patch(
         "app.sequence.sequence.AsyncResult", return_value=finished_none_async_result

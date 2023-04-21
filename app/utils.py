@@ -1,5 +1,6 @@
 import asyncio
 import functools
+import os
 import re
 
 import httpx
@@ -60,3 +61,15 @@ def clean_args():
         return inner
 
     return wrapper
+
+
+def include_in_schema() -> bool:
+    """Returns if the endpoint should be included in the OpenAPI schema.
+    Returns:
+        bool: True if ENVIRONMENT envvar is not PROD or not set, otherwise False.
+    """
+    env = os.environ.get("ENVIRONMENT", None)
+
+    if env == "DEV" or env == "dev":
+        return True
+    return False
