@@ -21,11 +21,15 @@ REDIS_URL = os.environ.get("REDIS_URL", "redis://redis:6379/1")
 celery = Celery("worker", backend=CELERY_RESULT_BACKEND, broker=CELERY_BROKER_URL)
 RedisCache.init_redis(REDIS_URL, "utf-8")
 MAX_WAIT_TIME = int(os.environ.get("MAX_WAIT_TIME", 600))
-SLEEP_TIME = int(os.environ.get("SLEEP_TIME", 30))
+SLEEP_TIME = int(os.environ.get("SLEEP_TIME", 20))
 
 trace.LOG_SUCCESS = """\
 Task %(name)s[%(id)s] succeeded in %(runtime)ss\
 """
+
+celery.conf.update(
+    result_serializer="msgpack",
+)
 
 
 @celery.task(
@@ -48,9 +52,6 @@ def retrieve_result(job_id: str, hashed_sequence: str):
         try:
             job_status = get_job_dispatcher_job_status(job_id)
         except JobStatusNotFoundException:
-            clear_jobdispatcher_id(hashed_sequence)
-            break
-        except Exception:
             clear_jobdispatcher_id(hashed_sequence)
             break
 
