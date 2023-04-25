@@ -30,6 +30,7 @@ Task %(name)s[%(id)s] succeeded in %(runtime)ss\
 celery.conf.update(
     result_serializer="msgpack",
     accept_content=["msgpack", "json"],
+    result_expires=0,
 )
 
 
