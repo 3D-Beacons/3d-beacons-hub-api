@@ -77,3 +77,22 @@ async def test_get_ensembl_summaries_api(
     )
 
     assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.asyncio
+async def test_annotations_api(
+    mocker, valid_annotation_response, registry, valid_uniprot
+):
+    future = asyncio.Future()
+    future.set_result(valid_annotation_response)
+    mocker.patch(
+        "app.annotations.annotations.get_services", return_value=registry["services"]
+    )
+    mocker.patch(
+        "app.annotations.annotations.get_annotations_api_helper", return_value=future
+    )
+    mocker.patch(
+        "app.annotations.annotations.get_base_service_url", return_value="http://test"
+    )
+    response = await client.get(f"/annotations/{valid_uniprot}.json?type=DOMAIN")
+    assert response.status_code == status.HTTP_200_OK

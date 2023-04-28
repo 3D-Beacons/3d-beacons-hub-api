@@ -55,6 +55,8 @@ def clean_args():
         def inner(*args, **kwargs):
             cleaned_args = []
             for x in args:
+                if not isinstance(x, str):
+                    x = str(x)
                 cleaned_args.append(x.strip(" ") if x else x)
             return func(*cleaned_args, **kwargs)
 
