@@ -9,9 +9,6 @@ from pydantic import BaseModel, Field
 class FeatureType(Enum):
     CARBOHYD = "CARBOHYD"
     DOMAIN = "DOMAIN"
-    CA_BIND = "CA_BIND"
-    DNA_BIND = "DNA_BIND"
-    NP_BIND = "NP_BIND"
     ACT_SITE = "ACT_SITE"
     METAL = "METAL"
     BINDING = "BINDING"
