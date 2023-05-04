@@ -28,13 +28,13 @@ async def get_annotations_api(
     uniprot_qualifier: Any = Path(
         ..., description=UNIPROT_QUAL_DESC, example=UNIPROT_ID_PARAM
     ),
+    annotation_type: FeatureType = Query(
+        ..., description="Annotation type", alias="type"
+    ),
     provider: Optional[Any] = Query(
         None, enum=[x["provider"] for x in get_services("annotations")]
     ),
     res_range: Any = Query(None, alias="range", description=UNIPROT_RANGE_DESC),
-    annotation_type: FeatureType = Query(
-        ..., description="Annotation type", alias="type"
-    ),
 ):
     f"""Returns annotation details for a UniProt accession
 
@@ -54,7 +54,7 @@ async def get_annotations_api(
     uniprot_qualifier = uniprot_qualifier.upper()
 
     results = await get_annotations_api_helper(
-        uniprot_qualifier, provider, res_range, annotation_type
+        uniprot_qualifier, annotation_type, provider, res_range
     )
 
     if not results:
@@ -66,9 +66,9 @@ async def get_annotations_api(
 @clean_args()
 async def get_annotations_api_helper(
     uniprot_qualifier: str,
+    annotation_type: str,
     provider: Optional[str] = None,
     res_range: Optional[str] = None,
-    annotation_type: Optional[str] = None,
 ):
     """Helper function for get_annotations_api"""
     qualifier = uniprot_qualifier.upper()
@@ -82,7 +82,7 @@ async def get_annotations_api_helper(
         final_url = get_final_service_url(
             base_url, service["accessPoint"], f"{qualifier}.json"
         )
-
+        final_url = f"{final_url}&type={annotation_type}"
         if res_range:
             final_url = f"{final_url}&range={res_range}"
 
@@ -96,4 +96,14 @@ async def get_annotations_api_helper(
     if not final_result:
         return None
 
-    return Annotation().from_dict(final_result)
+    annotations = []
+
+    for result in final_result:
+        annotations.extend(result["annotation"])
+
+    return Annotation(
+        accession=uniprot_qualifier,
+        id=final_result[0]["id"],
+        sequence=final_result[0]["sequence"],
+        annotation=annotations,
+    )
