@@ -86,7 +86,15 @@ async def get_uniprot_summary(
         calls.append(final_url)
 
     result = await send_async_requests(calls)
-    final_result = [x.json() for x in result if x and x.status_code == 200]
+    final_result = []
+
+    for x in result:
+        if x and x.status_code == status.HTTP_200_OK:
+            try:
+                final_result.append(x.json())
+            except Exception:
+                logger.error(f"Error parsing response from {x.url}")
+
     if not final_result:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
 
@@ -172,7 +180,14 @@ async def get_uniprot(
         calls.append(final_url)
 
     result = await send_async_requests(calls)
-    final_result = [x.json() for x in result if x and x.status_code == 200]
+    final_result = []
+
+    for x in result:
+        if x and x.status_code == status.HTTP_200_OK:
+            try:
+                final_result.append(x.json())
+            except Exception:
+                logger.error(f"Error parsing response from {x.url}")
 
     if not final_result:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
