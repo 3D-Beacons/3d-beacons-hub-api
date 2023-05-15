@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
 from starlette import status
 
+from app import logger
 from app.annotations.schema import Annotation, FeatureType
 from app.config import get_base_service_url, get_services
 from app.constants import UNIPROT_ID_PARAM, UNIPROT_QUAL_DESC, UNIPROT_RANGE_DESC
@@ -89,9 +90,14 @@ async def get_annotations_api_helper(
         calls.append(final_url)
 
     result = await send_async_requests(calls)
-    final_result = [
-        x.json() for x in result if x and x.status_code == status.HTTP_200_OK
-    ]
+    final_result = []
+
+    for x in result:
+        if x and x.status_code == status.HTTP_200_OK:
+            try:
+                final_result.append(x.json())
+            except Exception:
+                logger.error(f"Error parsing response from {x.url}")
 
     if not final_result:
         return None
