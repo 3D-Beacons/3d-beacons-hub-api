@@ -15,7 +15,7 @@
 ## Background
 3D-Beacons is an open collaboration between providers of macromolecular structure models. The goal of this collaboration is to provide model coordinates and meta-information from all the contributing data resources in a standardized data format and on a unified platform.
 
-![Image](https://raw.githubusercontent.com/3D-Beacons/3d-beacons-documentation/main/assets/3d-beacons-summary.png)
+![Image]([https://raw.githubusercontent.com/3D-Beacons/3d-beacons-documentation/main/assets/3d-beacons-summary.png](https://github.com/3D-Beacons/3D-Beacons/blob/main/assets/3D-Beacons%20overview%20figure.png))
 
 **Schematical overview of the 3D-Beacons infrastructure**
 
