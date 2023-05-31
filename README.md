@@ -15,23 +15,11 @@
 ## Background
 3D-Beacons is an open collaboration between providers of macromolecular structure models. The goal of this collaboration is to provide model coordinates and meta-information from all the contributing data resources in a standardized data format and on a unified platform.
 
-![Image]([https://raw.githubusercontent.com/3D-Beacons/3d-beacons-documentation/main/assets/3d-beacons-summary.png](https://github.com/3D-Beacons/3D-Beacons/blob/main/assets/3D-Beacons%20overview%20figure.png))
+![Image](https://raw.githubusercontent.com/3D-Beacons/3D-Beacons/main/assets/3D-Beacons%20overview%20figure.png)
 
 **Schematical overview of the 3D-Beacons infrastructure**
 
 3D-Beacons consists of a Registry, a Hub and Beacons who host Clients. The Registry is used by the Hub to look up which API endpoints are supported by the various Beacons. The Beacons provide data according to the 3D-Beacons data specifications ([documentation at GitHub](https://github.com/3D-Beacons/3d-beacons-specifications/blob/production/oas3.yaml)). The Hub collates the data from the Beacons and expose it via Hub API endpoints.
-
-### Current 3D-Beacons
-- [AlphaFill](https://alphafill.eu/)
-- [AlphaFold DB](https://www.alphafold.ebi.ac.uk/)
-- [Genome3D](http://www.genome3d.net/)
-- [HegeLab](http://www.hegelab.org/)
-- [isoform.io](https://isoform.io/)
-- [ModelArchive](https://modelarchive.org/)
-- [PDBe](https://www.ebi.ac.uk/pdbe/)
-- [PED](https://proteinensemble.org/)
-- [SASBDB](https://www.sasbdb.org/)
-- [SWISS-MODEL Repository](https://swissmodel.expasy.org/)
 
 ## About the 3D-Beacons Hub API
 The 3D-Beacons Hub API is an integrator that makes API requests to Beacon APIs and collates, ranks and exposes data. The Hub API is using the [3D-Beacons Registry](https://github.com/3D-Beacons/3d-beacons-registry) to look up which Beacons support what API endpoint.
