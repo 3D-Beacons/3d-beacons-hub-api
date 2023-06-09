@@ -4,10 +4,13 @@
         "description": "cDNA FLJ58390, highly similar to Aldo-keto reductase family 1 member C3homolog OS=Homo sapiens OX=9606 PE=2 SV=1",
         "hit_length": 138,
         "id": "B4DKT3_HUMAN",
+        "hit_uni_os":"Homo sapiens",
+        "hit_uni_ox": 9606,
         "hit_hsps": [
             {
                 "hsp_score": 637,
                 "hsp_bit_score": 249.98,
+                "hsp_expect": 1.8e-83,
                 "hsp_align_len": 122,
                 "hsp_identity": 100,
                 "hsp_positive": 100,
@@ -22,11 +25,14 @@
         "description": "Aldo-keto reductase family 1 member C3 OS=Nomascus leucogenys OX=61853 GN=AKR1C3 PE=3 SV=1",
         "hit_length": 323,
         "id": "A0A2I3HVB7_NOMLE",
+        "hit_uni_os": "Nomascus leucogenys",
+        "hit_uni_ox": 61853,
         "hit_hsps": [
             {
                 "hsp_score": 637,
                 "hsp_bit_score": 249.98,
                 "hsp_align_len": 122,
+                "hsp_expect": 7.7e-81,
                 "hsp_identity": 100,
                 "hsp_positive": 100,
                 "hsp_qseq": "DSKHQCVKLNDGHFMPVLGFGTYAPPEVPRSKALEVTKLAIEAGFRHIDSAHLYNNEEQVGLAIRSKIADGSVKREDIFYTSKLWSTFHRPELVRPALENSLKKAQLDYVDLYLIHSPMSLK",
@@ -40,11 +46,14 @@
         "description": "Aldo-keto reductase family 1 member C3 OS=Pan paniscus OX=9597 GN=AKR1C3 PE=3 SV=1",
         "hit_length": 323,
         "id": "A0A2R9A0L9_PANPA",
+        "hit_uni_os": "Pan paniscus",
+        "hit_uni_ox": 9597,
         "hit_hsps": [
             {
                 "hsp_score": 637,
                 "hsp_bit_score": 249.98,
                 "hsp_align_len": 122,
+                "hsp_expect": 7.7e-81,
                 "hsp_identity": 100,
                 "hsp_positive": 100,
                 "hsp_qseq": "DSKHQCVKLNDGHFMPVLGFGTYAPPEVPRSKALEVTKLAIEAGFRHIDSAHLYNNEEQVGLAIRSKIADGSVKREDIFYTSKLWSTFHRPELVRPALENSLKKAQLDYVDLYLIHSPMSLK",
@@ -58,11 +67,14 @@
         "description": "Aldo-keto reductase family 1, member C3 (3-alpha hydroxysteroid dehydrogenase, type II) OS=Pan troglodytes OX=9598 GN=AKR1C3 PE=2 SV=1",
         "hit_length": 323,
         "id": "K7D0S3_PANTR",
+        "hit_uni_os": "Pan troglodytes",
+        "hit_uni_ox": 9598,
         "hit_hsps": [
             {
                 "hsp_score": 637,
                 "hsp_bit_score": 249.98,
                 "hsp_align_len": 122,
+                "hsp_expect": 7.7e-81,
                 "hsp_identity": 95,
                 "hsp_positive": 100,
                 "hsp_qseq": "DSKHQCVKLNDGHFMPVLGFGTYAPPEVPRSKALEVTKLAIEAGFRHIDSAHLYNNEEQVGLAIRSKIADGSVKREDIFYTSKLWSTFHRPELVRPALENSLKKAQLDYVDLYLIHSPMSLK",

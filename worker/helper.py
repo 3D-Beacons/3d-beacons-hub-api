@@ -36,8 +36,8 @@ def prepare_hit_dictionary(hit_list: List) -> Dict:
                     "description": hit["hit_desc"],
                     "hit_length": hit["hit_len"],
                     "id": hit["hit_id"],
-                    "hit_os": hit["hit_os"],
-                    "hit_uni_ox": hit["hit_uni_ox"],
+                    "hit_uni_os": hit["hit_os"],
+                    "hit_uni_ox": int(hit["hit_uni_ox"]) if hit["hit_uni_ox"] else None,
                     "hit_hsps": [
                         {
                             "hsp_score": x["hsp_score"],
