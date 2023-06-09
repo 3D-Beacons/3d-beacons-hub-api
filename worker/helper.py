@@ -36,10 +36,13 @@ def prepare_hit_dictionary(hit_list: List) -> Dict:
                     "description": hit["hit_desc"],
                     "hit_length": hit["hit_len"],
                     "id": hit["hit_id"],
+                    "hit_os": hit["hit_os"],
+                    "hit_uni_ox": hit["hit_uni_ox"],
                     "hit_hsps": [
                         {
                             "hsp_score": x["hsp_score"],
                             "hsp_bit_score": x["hsp_bit_score"],
+                            "hsp_expect": x["hsp_expect"],
                             "hsp_align_len": x["hsp_align_len"],
                             "hsp_identity": x["hsp_identity"],
                             "hsp_positive": x["hsp_positive"],
