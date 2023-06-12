@@ -44,6 +44,7 @@ class HSPS(BaseModel):
     hsp_qseq: str
     hsp_hseq: str
     hsp_mseq: str
+    hsp_expect: float
 
 
 class SearchAccession(BaseModel):
@@ -53,6 +54,8 @@ class SearchAccession(BaseModel):
     hit_length: int
     hit_hsps: List[HSPS]
     summary: UniprotSummary = None
+    hit_uni_ox: int
+    hit_uni_os: str
 
 
 class SearchResults(BaseModel):
