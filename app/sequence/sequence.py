@@ -34,7 +34,6 @@ from app.sequence.schema import (
     SearchSuccessMessage,
     Sequence,
 )
-from app.utils import include_in_schema
 from worker.cache.utils import (
     clear_celery_task_id,
     clear_jobdispatcher_id,
@@ -58,7 +57,7 @@ sequence_route = APIRouter()
         HTTP_400_BAD_REQUEST: {"model": JobSubmissionErrorMessage},
     },
     tags=["Sequence"],
-    include_in_schema=include_in_schema(),
+    include_in_schema=True,
 )
 async def search(sequence: Sequence):
     hashed_sequence = generate_hash(sequence.sequence)
@@ -106,7 +105,7 @@ async def search(sequence: Sequence):
         HTTP_400_BAD_REQUEST: {"model": NoJobFoundMessage},
     },
     tags=["Sequence"],
-    include_in_schema=include_in_schema(),
+    include_in_schema=True,
 )
 async def result(
     job_id: str,
