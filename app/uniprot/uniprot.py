@@ -30,7 +30,7 @@ uniprot_route = APIRouter()
 @uniprot_route.get(
     "/summary/{qualifier}.json",
     status_code=status.HTTP_200_OK,
-    response_model=UniprotSummary,
+    response_model=Result,
     response_model_exclude_unset=True,
     tags=["UniProt"],
 )
@@ -144,7 +144,7 @@ async def get_uniprot_helper(
         )
 
         if res_range:
-            final_url = f"{final_url}&range={res_range}"
+            final_url = f"{final_url}range={res_range}"
 
         calls.append(final_url)
 
