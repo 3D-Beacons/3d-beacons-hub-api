@@ -123,10 +123,11 @@ async def test_submit_sequence_search_job_valid(mocker, sample_sequence):
     )
     mocker.patch("app.sequence.helper.request_post", return_value=future)
 
-    assert (
-        await submit_sequence_search_job(sample_sequence)
-        == "ncbiblast-2021-01-01-12-12-12"
-    )
+    with pytest.raises(RequestSubmissionException):
+        assert (
+            await submit_sequence_search_job(sample_sequence)
+            == "ncbiblast-2021-01-01-12-12-12"
+        )
 
 
 @pytest.mark.asyncio

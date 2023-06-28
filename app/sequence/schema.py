@@ -56,6 +56,8 @@ class SearchAccession(BaseModel):
     summary: UniprotSummary = None
     hit_uni_ox: int
     hit_uni_os: str
+    hit_com_os: str
+    title: str
 
 
 class SearchResults(BaseModel):
