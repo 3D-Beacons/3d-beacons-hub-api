@@ -11,6 +11,8 @@ from worker.helper import (
     filter_json_results,
     get_job_dispatcher_job_status,
     get_job_dispatcher_json_results,
+    get_nested_value_from_json,
+    get_uniprot_summaries,
     prepare_hit_dictionary,
     prepare_hit_dictionary_with_summary_results,
 )
@@ -73,6 +75,40 @@ def retrieve_result(job_id: str, hashed_sequence: str):
             if all(not x.get("summary") for x in final_hit_dictionary.values()):
                 clear_jobdispatcher_id(hashed_sequence)
                 return
+
+            # get uniprot api results
+            uniprot_api_results = get_uniprot_summaries(
+                list(final_hit_dictionary.keys())
+            )
+
+            for key in final_hit_dictionary:
+                accession_result = uniprot_api_results.get(key)
+
+                if accession_result:
+                    protein_name = get_nested_value_from_json(
+                        accession_result, "protein.recommendedName.fullName.value"
+                    )
+
+                    if not protein_name:
+                        protein_name = get_nested_value_from_json(
+                            accession_result, "protein.submittedName[0].fullName.value"
+                        )
+
+                    organism_names = {
+                        name["type"]: name["value"]
+                        for name in get_nested_value_from_json(
+                            accession_result, "organism.names"
+                        )
+                    }
+
+                    final_hit_dictionary[key].update(
+                        {
+                            "title": protein_name,
+                            "hit_com_os": organism_names.get("common")
+                            if organism_names.get("common")
+                            else organism_names.get("scientific"),
+                        }
+                    )
 
             return final_hit_dictionary
 

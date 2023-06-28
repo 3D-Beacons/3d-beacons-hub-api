@@ -1,12 +1,16 @@
 import os
+import re
+from time import sleep
 from typing import Dict, List
 
 import requests
 
+from app import logger
 from worker.schema import AccessionListRequest
 
 MAX_POST_LIMIT = int(os.environ.get("MAX_POST_LIMIT", 10))
 BEACONS_API_URL = os.environ.get("BEACONS_API_URL")
+ARRAY_REGEX = r"(\w+)(\[(\d+)\])?"
 
 
 class JobStatusNotFoundException(Exception):
@@ -143,3 +147,45 @@ def get_job_dispatcher_json_results(job_id: str):
     if response and response.status_code == 200:
         return response.json()
     raise JobResultsNotFoundException("Job results not found!")
+
+
+def get_uniprot_summaries(accession_list):
+    response_dict = {}
+    with requests.Session() as session:
+        for accessions_batch in divide_chunks(
+            accession_list, 100  # UniProt accepts max 100 accessions per request
+        ):
+            accessions = ",".join(accessions_batch)
+            try_count = 1
+            url = f"https://www.ebi.ac.uk/proteins/api/proteins?accession={accessions}"
+
+            while try_count <= 3:
+                try:
+                    response = session.get(url, headers={"Accept": "application/json"})
+                    break
+                except Exception:
+                    sleep(0.2)
+                    try_count += 1
+                    logger.warning(f"Error fetching {url}! Retry count: {try_count}")
+                    continue
+
+            if response and response.status_code == 200:
+                for result in response.json():
+                    accession = result["accession"]
+                    response_dict[accession] = result
+
+    return response_dict
+
+
+def get_nested_value_from_json(json_obj, key):
+    obj = json_obj.copy()
+    try:
+        for token in key.split("."):
+            match = re.match(ARRAY_REGEX, token)
+            if match.group(3):
+                obj = obj.get(match.group(1))[int(match.group(3))]
+            else:
+                obj = obj.get(token)
+        return obj
+    except Exception:
+        return None

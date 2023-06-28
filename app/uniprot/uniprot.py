@@ -111,7 +111,7 @@ async def get_list_of_uniprot_summary(list_request: AccessionListRequest):
     if not results:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
 
-    return results
+    return list(results)
 
 
 @clean_args()

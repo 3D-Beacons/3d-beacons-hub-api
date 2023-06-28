@@ -61,9 +61,9 @@ async def test_get_ensembl_summaries_api(
     valid_gifts_response,
     uniprot_summary_obj_list,
 ):
-    gifts_future = asyncio.Future()
-    gifts_future.set_result(valid_gifts_response)
-    mocker.patch("app.ensembl.ensembl.get_ensembl_mappings", return_value=gifts_future)
+    mocker.patch(
+        "app.ensembl.ensembl.get_ensembl_mappings", return_value=valid_gifts_response
+    )
 
     uniprot_list_future = asyncio.Future()
     uniprot_list_future.set_result(uniprot_summary_obj_list)
