@@ -33,6 +33,11 @@ class UniprotEntry(BaseModel):
         description="1-indexed last residue of the UniProt sequence segment",
         example=86,
     )
+    description: Optional[str] = Field(
+        None,
+        description="Description of the UniProt entry",
+        example="Proto-oncogene tyrosine-protein kinase ABL1",
+    )
 
 
 class PdbEntry(BaseModel):
