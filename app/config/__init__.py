@@ -10,6 +10,7 @@ DATA_FILE = "data.json"
 ENV = os.getenv("ENVIRONMENT", "DEV")
 MAX_POST_LIMIT = int(os.getenv("MAX_POST_LIMIT", 10))
 GIFTS_API = os.getenv("GIFTS_API", "https://www.ebi.ac.uk/gifts/api/mappings/")
+UNIPROT_API = os.getenv("UNIPROT_API", "https://www.ebi.ac.uk/proteins/api/proteins/")
 
 logger.debug(f"Environment is {ENV}")
 

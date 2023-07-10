@@ -1,12 +1,12 @@
 import asyncio
-from typing import List
+from typing import Dict, List
 
 import pydantic
 from starlette import status
 from starlette.responses import JSONResponse
 
 from app import logger
-from app.config import MAX_POST_LIMIT, get_base_service_url, get_services
+from app.config import MAX_POST_LIMIT, UNIPROT_API, get_base_service_url, get_services
 from app.constants import TEMPLATE_DESC, UNIPROT_QUAL_DESC, UNP_CHECKSUM_DESC
 from app.uniprot.schema import (
     AccessionListRequest,
@@ -15,6 +15,7 @@ from app.uniprot.schema import (
     UniprotSummary,
 )
 from app.utils import clean_args, get_final_service_url, send_async_requests
+from worker.helper import get_nested_value_from_json
 
 
 async def get_list_of_uniprot_summary_helper(list_request: AccessionListRequest):
@@ -164,3 +165,31 @@ def get_first_entry_with_checksum(in_result: List):
         return in_result[0]["uniprot_entry"]
 
     return None
+
+
+async def get_uniprot_api_results(accessions: List[str]):
+    result = await send_async_requests([f"{UNIPROT_API}{x}" for x in accessions])
+
+    final_result = {}
+
+    for x in result:
+        if x and x.status_code == status.HTTP_200_OK:
+            try:
+                response = x.json()
+                final_result[response["accession"]] = response
+            except Exception:
+                logger.error(f"Error parsing response from {x.url}")
+
+    return final_result
+
+
+def get_uniprot_name(response: Dict) -> str:
+    protein_name = get_nested_value_from_json(
+        response, "protein.recommendedName.fullName.value"
+    )
+    if not protein_name:
+        protein_name = get_nested_value_from_json(
+            response, "protein.submittedName[0].fullName.value"
+        )
+
+    return protein_name or "Uncharacterized"

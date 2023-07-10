@@ -1,14 +1,18 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 from fastapi.params import Path, Query
 from fastapi.routing import APIRouter
 from starlette import status
 from starlette.responses import JSONResponse
 
-from app.config import GIFTS_API, get_services
+from app.config import GIFTS_API, MAX_POST_LIMIT, get_services
 from app.constants import ENSEMBL_QUAL_DESC
 from app.ensembl.schema import EnsemblSummary
-from app.uniprot.helper import get_list_of_uniprot_summary_helper
+from app.uniprot.helper import (
+    get_list_of_uniprot_summary_helper,
+    get_uniprot_api_results,
+    get_uniprot_name,
+)
 from app.uniprot.schema import AccessionListRequest
 from app.utils import clean_args, request_get
 
@@ -71,9 +75,12 @@ async def get_ensembl_summary_helper(
 
     transcript_dict: Dict[str, List] = {}
     uniprot_request_list = AccessionListRequest(accessions=[], provider=provider)
-    uniprot_set = set()
+    uniprot_set: Set = set()
 
     for mapping in ensembl_mappings["entryMappings"]:
+        if len(uniprot_set) >= MAX_POST_LIMIT:
+            break
+
         uniprot_accession = mapping["uniprotEntry"]["uniprotAccession"]
         uniprot_set.add(uniprot_accession)
 
@@ -88,6 +95,9 @@ async def get_ensembl_summary_helper(
 
     uniprot_request_list.accessions = list(uniprot_set)
     uniprot_summary = await get_list_of_uniprot_summary_helper(uniprot_request_list)
+    uniprot_api_response = await get_uniprot_api_results(
+        uniprot_request_list.accessions
+    )
 
     if not uniprot_summary:
         return JSONResponse(content={}, status_code=status.HTTP_404_NOT_FOUND)
@@ -100,6 +110,9 @@ async def get_ensembl_summary_helper(
     }
 
     for uniprot in uniprot_summary:
+        uniprot_response = uniprot_api_response.get(uniprot.uniprot_entry.ac)
+        uniprot.uniprot_entry.description = get_uniprot_name(uniprot_response)
+
         for ensembl_transcript in transcript_dict[uniprot.uniprot_entry.ac]:
             results["uniprot_mappings"].append(
                 {
