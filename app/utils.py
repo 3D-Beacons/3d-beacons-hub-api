@@ -26,6 +26,8 @@ async def request_get(url: str):
         logger.error(f"Timeout for {url}")
     except httpx.HTTPError:
         logger.error(f"Error while making a request to {url}", exc_info=True)
+    except Exception:
+        logger.error(f"Unknown error while making a request to {url}", exc_info=True)
 
 
 async def request_post(url: str, data):
@@ -35,6 +37,8 @@ async def request_post(url: str, data):
         logger.error(f"Timeout for {url}")
     except httpx.HTTPError:
         logger.error(f"Error while making a request to {url}", exc_info=True)
+    except Exception:
+        logger.error(f"Unknown error while making a request to {url}", exc_info=True)
 
 
 async def send_async_requests(endpoints):
