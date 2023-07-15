@@ -5,7 +5,7 @@ import re
 
 import httpx
 
-from app import httpx_async_client, logger
+from app import logger
 from app.version import __major__version__
 
 REQUEST_TIMEOUT = 5
@@ -20,25 +20,39 @@ async def request_get(url: str):
     Returns:
         Response: A Response object.
     """
-    try:
-        return await httpx_async_client.get(url, timeout=REQUEST_TIMEOUT)
-    except httpx.TimeoutException:
-        logger.error(f"Timeout for {url}")
-    except httpx.HTTPError:
-        logger.error(f"Error while making a request to {url}", exc_info=True)
-    except Exception:
-        logger.error(f"Unknown error while making a request to {url}", exc_info=True)
+    response = None
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(url, timeout=REQUEST_TIMEOUT)
+        except httpx.TimeoutException:
+            logger.error(f"Timeout for {url}")
+        except httpx.HTTPError:
+            logger.error(f"Error while making a request to {url}", exc_info=True)
+        except Exception:
+            logger.error(
+                f"Unknown error while making a request to {url}", exc_info=True
+            )
+        finally:
+            await client.aclose()
+            return response
 
 
 async def request_post(url: str, data):
-    try:
-        return await httpx_async_client.post(url, timeout=REQUEST_TIMEOUT, data=data)
-    except httpx.TimeoutException:
-        logger.error(f"Timeout for {url}")
-    except httpx.HTTPError:
-        logger.error(f"Error while making a request to {url}", exc_info=True)
-    except Exception:
-        logger.error(f"Unknown error while making a request to {url}", exc_info=True)
+    response = None
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.post(url, timeout=REQUEST_TIMEOUT, data=data)
+        except httpx.TimeoutException:
+            logger.error(f"Timeout for {url}")
+        except httpx.HTTPError:
+            logger.error(f"Error while making a request to {url}", exc_info=True)
+        except Exception:
+            logger.error(
+                f"Unknown error while making a request to {url}", exc_info=True
+            )
+        finally:
+            await client.aclose()
+            return response
 
 
 async def send_async_requests(endpoints):
