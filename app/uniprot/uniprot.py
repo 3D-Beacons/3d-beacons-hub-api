@@ -154,7 +154,7 @@ async def get_uniprot_helper(
     for x in result:
         if x and x.status_code == status.HTTP_200_OK:
             try:
-                final_result.append(x.json())
+                final_result.append(dict(x.json()))
             except Exception:
                 logger.error(f"Error parsing response from {x.url}")
 

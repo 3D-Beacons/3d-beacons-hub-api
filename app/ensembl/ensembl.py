@@ -136,6 +136,6 @@ async def get_ensembl_mappings(qualifier: str):
     result = await request_get(f"{GIFTS_API}?searchTerm={qualifier}&format=json")
 
     if result.status_code == status.HTTP_200_OK:
-        return result.json().get("results")[0]
+        return dict(result.json()).get("results")[0]
 
     return None
