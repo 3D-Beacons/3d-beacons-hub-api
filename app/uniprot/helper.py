@@ -103,7 +103,7 @@ async def get_uniprot_summary_helper(
     for x in result:
         if x and x.status_code == status.HTTP_200_OK:
             try:
-                final_result.append(x.json())
+                final_result.append(dict(x.json()))
             except Exception:
                 logger.error(f"Error parsing response from {x.url}")
 
@@ -175,7 +175,7 @@ async def get_uniprot_api_results(accessions: List[str]):
     for x in result:
         if x and x.status_code == status.HTTP_200_OK:
             try:
-                response = x.json()
+                response = dict(x.json())
                 final_result[response["accession"]] = response
             except Exception:
                 logger.error(f"Error parsing response from {x.url}")
