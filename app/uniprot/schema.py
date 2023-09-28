@@ -273,6 +273,12 @@ class SummaryItems(BaseModel):
     oligomeric_state: Optional[OligomericState] = Field(
         None, description="Oligomeric state of the model", example="MONOMER"
     )
+    oligomeric_state_confidence: Optional[float] = Field(
+        None,
+        description="Numerical value that describes the confidence in the oligomeric "
+        "state of the predicted complex",
+        example=0.4603,
+    )
     preferred_assembly_id: Optional[str] = Field(
         None,
         description="Identifier of the preferred assembly in the model",
