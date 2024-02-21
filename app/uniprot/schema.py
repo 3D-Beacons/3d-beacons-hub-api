@@ -162,7 +162,12 @@ class Entity(BaseModel):
     description: str = Field(
         ..., description="A textual label of the molecule", example="Striatin-3"
     )
-    chain_ids: List[str]
+    chain_ids: List[str] = Field(
+        ...,
+        description="A list of label_asym identifiers "
+        "( chain_id in the case of PDB format) of the molecule",
+        example=["A", "B"],
+    )
 
 
 class SummaryItems(BaseModel):
