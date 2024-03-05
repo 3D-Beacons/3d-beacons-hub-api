@@ -1,8 +1,27 @@
-trigger_pipeline:
-  stage: deploy
+docker_build:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
   script:
-    - 'curl -X POST -F token=$TRIGGER_TOKEN -F ref=master -F tagname=$CI_COMMIT_TAG "$TRIGGER_URL"'
-  rules:
-    - if: $CI_COMMIT_TAG
+  - mkdir -p /kaniko/.docker
+  - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+  - /kaniko/executor --context ${CI_PROJECT_DIR} --dockerfile ${CI_PROJECT_DIR}/Dockerfile --snapshotMode=redo --destination ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}
   tags:
-    - pdbekb-shell
+  - pdbekb-docker
+
+trigger_deploy:
+  stage: deploy
+  inherit:
+    variables: false
+  variables:
+    UPSTREAM_REF: $CI_COMMIT_REF_NAME
+    IMAGE_PATHS: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}
+    IMAGE_NAMES: beacons-hub-api
+    APP_NAME: beacons-hub-api/v2
+  trigger:
+    project: pdbe/backend/k8s-deploy-configs
+    branch: main
+    strategy: depend
+  needs:
+  - docker_build
