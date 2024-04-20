@@ -11,6 +11,7 @@ ENV = os.getenv("ENVIRONMENT", "DEV")
 MAX_POST_LIMIT = int(os.getenv("MAX_POST_LIMIT", 10))
 GIFTS_API = os.getenv("GIFTS_API", "https://www.ebi.ac.uk/gifts/api/mappings/")
 UNIPROT_API = os.getenv("UNIPROT_API", "https://www.ebi.ac.uk/proteins/api/proteins/")
+DISABLED_BEACONS = os.environ.get("DISABLED_BEACONS", "").split(",")
 
 logger.debug(f"Environment is {ENV}")
 
@@ -82,6 +83,13 @@ def get_services(
     if provider:
         results = list(
             filter(lambda x: x["provider"] == provider, [x for x in results])
+        )
+
+    if DISABLED_BEACONS:
+        results = list(
+            filter(
+                lambda x: x["provider"] not in DISABLED_BEACONS, [x for x in results]
+            )
         )
 
     if exclude_provider:
