@@ -5,7 +5,7 @@ services:
     build: .
     ports:
       - "8000:8000"
-    command: uvicorn app.app:app --host 0.0.0.0 --port 8000
+    command: gunicorn --bind 0.0.0.0:8000 --conf /app/app/gunicorn_conf.py app.app:app
     environment:
       - ENVIRONMENT=DEV
       - DEBUG=1

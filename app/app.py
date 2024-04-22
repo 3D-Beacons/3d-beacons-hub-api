@@ -1,3 +1,4 @@
+import os
 import time
 
 from fastapi import FastAPI
@@ -6,6 +7,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.openapi.utils import get_openapi
 from prometheus_fastapi_instrumentator import Instrumentator
 from starlette.requests import Request
+from uvicorn.workers import UvicornWorker
 
 from app import REDIS_URL
 from app.annotations.annotations import annotations_route
@@ -77,6 +79,13 @@ async def clear_config_caches():
     read_data_file.cache_clear()
     load_data_file.cache_clear()
     get_providers.cache_clear()
+
+
+class CustomUvicornWorker(UvicornWorker):
+    CONFIG_KWARGS = {}
+    root_path = os.environ.get("ROOT_PATH", "")
+    if root_path:
+        CONFIG_KWARGS.update({"root_path": root_path})
 
 
 def custom_openapi():

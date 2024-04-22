@@ -21,4 +21,4 @@ RUN pip3 install -r requirements.txt
 COPY . .
 
 # EXPOSE 8000
-# CMD uvicorn app.app:app --host 0.0.0.0 --port 8000 --root-path $ROOT_PATH
+CMD gunicorn --bind 0.0.0.0:8000 --conf /app/app/gunicorn_conf.py app.app:app
