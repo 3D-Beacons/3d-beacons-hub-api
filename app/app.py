@@ -30,6 +30,15 @@ app = FastAPI(
     title="3D Beacons HUB API",
     description="The 3D-Beacons Network provides unified programmatic access to "
     "experimentally determined and predicted structure models.",
+    contact={
+        "name": "3D-Beacons Network",
+        "url": "https://3dbeacons.org",
+        "email": "pdbekb_help@ebi.ac.uk",
+    },
+    license_info={
+        "name": "CC BY 4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+    },
     redoc_url=None,
     version=schema_version,
 )
