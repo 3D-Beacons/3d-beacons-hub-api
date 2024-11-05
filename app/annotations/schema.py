@@ -31,6 +31,14 @@ class Region(BaseModel):
         ..., description="The first position of the annotation", example=23
     )
     end: int = Field(..., description="The last position of the annotation", example=42)
+    annotation_value: str = Field(
+        None, description="The value of the annotation", example="0.9"
+    )
+    unit: str = Field(
+        None,
+        description="The unit of the annotation value, if applicable",
+        example="mmol",
+    )
 
 
 class Evidence(Enum):

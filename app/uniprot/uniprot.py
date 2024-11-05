@@ -8,7 +8,12 @@ from starlette.responses import JSONResponse
 
 from app import logger
 from app.config import get_base_service_url, get_services
-from app.constants import TEMPLATE_DESC, UNIPROT_QUAL_DESC, UNP_CHECKSUM_DESC
+from app.constants import (
+    QUERY_DESC,
+    TEMPLATE_DESC,
+    UNIPROT_QUAL_DESC,
+    UNP_CHECKSUM_DESC,
+)
 from app.uniprot.helper import (
     filter_on_checksum,
     get_first_entry_with_checksum,
@@ -33,9 +38,17 @@ uniprot_route = APIRouter()
     response_model=UniprotSummary,
     response_model_exclude_unset=True,
     tags=["UniProt"],
+    description="""
+    Retrieve a summary of experimentally determined and predicted structure models
+    available for a UniProtKB accession, entry name, or CRC64 checksum associated
+    with a UniProt sequence.
+
+    Note that some model providers may not support searches by entry name or
+    CRC64 checksum.
+    """,
 )
 async def get_uniprot_summary(
-    qualifier: Any = Path(..., description=UNIPROT_QUAL_DESC, example="P38398"),
+    qualifier: Any = Path(..., description=QUERY_DESC, example="P38398"),
     provider: Optional[Any] = Query(
         None, enum=[x["provider"] for x in get_services("summary")]
     ),
@@ -60,7 +73,7 @@ async def get_uniprot_summary(
     accession or entry name
 
     Args:
-        qualifier (str): {UNIPROT_QUAL_DESC}
+        qualifier (str): {QUERY_DESC}
         provider (str, optional): Data provider
         template (str, optional): {TEMPLATE_DESC}
         res_range (str, optional): Residue range
@@ -202,11 +215,19 @@ async def get_uniprot_helper(
     status_code=status.HTTP_200_OK,
     response_model=UniprotDetails,
     tags=["UniProt"],
+    description="""
+    Retrieve residue-level mappings for experimentally determined and predicted
+    structure models available for a UniProtKB accession, entry name, or CRC64
+    checksum associated with a UniProt sequence.
+
+    Note that some model providers may not support searches by entry name or
+    CRC64 checksum.
+    """,
 )
 async def get_uniprot(
     qualifier: Any = Path(
         ...,
-        description="UniProtKB accession number (AC) or entry name (ID)",
+        description=QUERY_DESC,
         example="P38398",
     ),
     provider: Optional[Any] = Query(
@@ -228,7 +249,7 @@ async def get_uniprot(
     f"""Returns experimental and theoretical models for a UniProt accession or entry name
 
     Args:
-        qualifier (str): {UNIPROT_QUAL_DESC}
+        qualifier (str): {QUERY_DESC}
         provider (str, optional): Data provider
         template (str, optional): {TEMPLATE_DESC}
         res_range (str, optional): Residue range
