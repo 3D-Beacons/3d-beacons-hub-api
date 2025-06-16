@@ -2,6 +2,7 @@ import asyncio
 import functools
 import os
 import re
+import time
 
 import httpx
 
@@ -11,6 +12,19 @@ from app.version import __major__version__
 REQUEST_TIMEOUT = 5
 
 
+def timeit(fn):
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = fn(*args, **kwargs)
+        end = time.time()
+        logger.info(f"{fn.__name__} took {end - start} seconds")
+        logger.info(args)
+        return result
+
+    return wrapper
+
+
+# @timeit
 async def request_get(url: str):
     """Makes an HTTP/HTTPS request and returns a response.
 
@@ -61,10 +75,14 @@ async def send_async_requests(endpoints):
 
 
 def get_final_service_url(*parts):
-    """Returns a final service URL."""
+    """Returns a final service URL, handling existing query parameters."""
     url = "/".join(parts)
-    result = re.sub(r"([^:])//", r"\1/", url)
-    return result + f"?version={__major__version__}"
+    url = re.sub(r"([^:])//", r"\1/", url)
+    # Check if there is already a query string
+    if "?" in url:
+        return url + f"&version={__major__version__}"
+    else:
+        return url + f"?version={__major__version__}"
 
 
 def clean_args():

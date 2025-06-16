@@ -12,6 +12,7 @@ from uvicorn.workers import UvicornWorker
 from app import REDIS_URL
 from app.annotations.annotations import annotations_route
 from app.ensembl.ensembl import ensembl_route
+from app.health.health import health_route
 from app.sequence.sequence import sequence_route
 from app.uniprot.uniprot import uniprot_route
 from app.version import __version__ as schema_version
@@ -46,6 +47,7 @@ app.include_router(uniprot_route, prefix="/uniprot")
 app.include_router(ensembl_route, prefix="/ensembl")
 app.include_router(sequence_route, prefix="/sequence")
 app.include_router(annotations_route, prefix="/annotations")
+app.include_router(health_route, prefix="/health")
 
 origins = ["*"]
 
