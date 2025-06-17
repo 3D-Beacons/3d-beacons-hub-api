@@ -10,7 +10,12 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
-class UniprotEntry(BaseModel):
+class StrictBaseModel(BaseModel):
+    class Config:
+        extra = "ignore"
+
+
+class UniprotEntry(StrictBaseModel):
     ac: str = Field(..., description="UniProt accession", example="P00520")
     id: Optional[str] = Field(
         None, description="UniProt identifier", example="ABL1_MOUSE"
@@ -40,7 +45,7 @@ class UniprotEntry(BaseModel):
     )
 
 
-class PdbEntry(BaseModel):
+class PdbEntry(StrictBaseModel):
     entry_id: str = Field(..., description="PDB entry identifier", example="3bow")
     chain_id: str = Field(..., description="PDB chain identifier", example="A")
     mapped_uniprot: Optional[str] = Field(
@@ -140,7 +145,7 @@ class IdentifierCategory(Enum):
     INCHIKEY = "INCHIKEY"
 
 
-class Entity(BaseModel):
+class Entity(StrictBaseModel):
     entity_type: EntityType = Field(
         ...,
         description="The type of the molecular entity; similar to _entity.type in"
@@ -170,7 +175,7 @@ class Entity(BaseModel):
     )
 
 
-class SummaryItems(BaseModel):
+class SummaryItems(StrictBaseModel):
     model_identifier: str = Field(
         ..., description="Identifier of the model, such as PDB id", example="8kfa"
     )
@@ -311,7 +316,7 @@ class ExperimentalMethod1(Enum):
     HYBRID = "HYBRID"
 
 
-class Template(BaseModel):
+class Template(StrictBaseModel):
     template_id: str = Field(
         ..., description="Identifier of the template", example="2aqa"
     )
@@ -348,7 +353,7 @@ class Template(BaseModel):
     )
 
 
-class Seqres(BaseModel):
+class Seqres(StrictBaseModel):
     aligned_sequence: str = Field(
         ..., description="Sequence of the model", example="AAGTGHLKKKYT..."
     )
@@ -358,7 +363,7 @@ class Seqres(BaseModel):
     to: int = Field(..., description="1-indexed last residue", example=976)
 
 
-class Uniprot(BaseModel):
+class Uniprot(StrictBaseModel):
     aligned_sequence: str = Field(
         ...,
         description="Sequence of the UniProt accession",
@@ -370,7 +375,7 @@ class Uniprot(BaseModel):
     to: int = Field(..., description="1-indexed last residue", example=868)
 
 
-class Residue(BaseModel):
+class Residue(StrictBaseModel):
     confidence: Optional[float] = Field(
         None, description="Confidence score in the range of [0,1]", example=0.99
     )
@@ -380,7 +385,7 @@ class Residue(BaseModel):
     )
 
 
-class Segment(BaseModel):
+class Segment(StrictBaseModel):
     templates: Optional[List[Template]] = Field(
         None, description="Information on the template(s) used for the model"
     )
@@ -389,16 +394,16 @@ class Segment(BaseModel):
     residues: List[Residue]
 
 
-class Chain(BaseModel):
+class Chain(StrictBaseModel):
     chain_id: str
     segments: Optional[List[Segment]] = None
 
 
-class Chains(BaseModel):
+class Chains(StrictBaseModel):
     __root__: List[Chain]
 
 
-class LigandItem(BaseModel):
+class LigandItem(StrictBaseModel):
     id: str = Field(..., description="Three-letter code of the ligand", example="IHP")
     name: str = Field(
         ..., description="Name of the small ligand", example="INOSITOL HEXAKISPHOSPHATE"
@@ -419,14 +424,14 @@ class Type(Enum):
     COIL = "COIL"
 
 
-class RegionItem(BaseModel):
+class RegionItem(StrictBaseModel):
     start: int = Field(
         ..., description="The first position of the annotation", example=23
     )
     end: int = Field(..., description="The last position of the annotation", example=42)
 
 
-class SecondaryStructureItem(BaseModel):
+class SecondaryStructureItem(StrictBaseModel):
     type: Type = Field(
         ..., description="Type of the secondary structure element", example="HELIX"
     )
@@ -448,14 +453,14 @@ class Type1(Enum):
     MUTAGEN = "MUTAGEN"
 
 
-class Region(BaseModel):
+class Region(StrictBaseModel):
     start: int = Field(
         ..., description="The first position of the annotation", example=23
     )
     end: int = Field(..., description="The last position of the annotation", example=42)
 
 
-class FeatureItem(BaseModel):
+class FeatureItem(StrictBaseModel):
     type: Type1 = Field(..., description="Type of the annotation", example="ACT_SITE")
     description: str = Field(
         ...,
@@ -468,7 +473,7 @@ class FeatureItem(BaseModel):
     regions: Optional[List[Region]] = None
 
 
-class Annotations(BaseModel):
+class Annotations(StrictBaseModel):
     accession: str = Field(..., description="A UniProt accession", example="P00734")
     id: Optional[str] = Field(
         None, description="A UniProt identifier", example="FGFR2_HUMAN"
@@ -501,7 +506,7 @@ class ModelType1(Enum):
     complex = "complex"
 
 
-class Metadata(BaseModel):
+class Metadata(StrictBaseModel):
     mappingAccession: str = Field(
         ...,
         description="Accession/identifier of the entity the model is mapped to",
@@ -532,31 +537,31 @@ class Metadata(BaseModel):
     )
 
 
-class Detailed(BaseModel):
+class Detailed(StrictBaseModel):
     summary: SummaryItems
     chains: Chains
 
 
-class Overview(BaseModel):
+class Overview(StrictBaseModel):
     summary: SummaryItems
 
 
-class UniprotSummary(BaseModel):
+class UniprotSummary(StrictBaseModel):
     uniprot_entry: Optional[UniprotEntry] = None
     structures: Optional[List[Overview]] = None
 
 
-class UniprotDetails(BaseModel):
+class UniprotDetails(StrictBaseModel):
     uniprot_entry: Optional[UniprotEntry] = None
     structures: Optional[List[Detailed]] = None
 
 
-class PdbSummary(BaseModel):
+class PdbSummary(StrictBaseModel):
     uniprot_entry: Optional[PdbEntry] = None
     structures: Optional[List[Overview]] = None
 
 
-class AccessionListRequest(BaseModel):
+class AccessionListRequest(StrictBaseModel):
     accessions: List[str] = Field(
         ..., description="A list of UniProt accessions", example=["P00734", "P38398"]
     )

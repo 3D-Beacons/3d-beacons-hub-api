@@ -1,6 +1,8 @@
-from typing import List
+from typing import List, Optional
 
+import pydantic
 from celery.result import AsyncResult
+from fastapi.params import Query
 from fastapi.routing import APIRouter
 from starlette.responses import JSONResponse
 from starlette.status import (
@@ -11,6 +13,7 @@ from starlette.status import (
 )
 
 from app import logger
+from app.config import get_base_service_url, get_services
 from app.constants import (
     JOB_FAILED_ERROR_MESSAGE,
     JOB_SUBMISSION_ERROR_MESSAGE,
@@ -27,13 +30,18 @@ from app.sequence.helper import (
     submit_sequence_search_job,
 )
 from app.sequence.schema import (
+    Entry,
     JobSubmissionErrorMessage,
     NoJobFoundMessage,
     SearchAccession,
     SearchInProgressMessage,
     SearchSuccessMessage,
     Sequence,
+    SequenceIdType,
+    SequenceOverview,
+    SequenceSummary,
 )
+from app.utils import get_final_service_url, send_async_requests
 from worker.cache.utils import (
     clear_celery_task_id,
     clear_jobdispatcher_id,
@@ -150,3 +158,87 @@ async def result(
 
     except JobResultsNotFoundException:
         return await handle_no_job_error(job_id)
+
+
+@sequence_route.get(
+    "/",
+    summary="Sequence Summary",
+    description="Retrieve a summary of experimentally determined and predicted"
+    "structure models available for a sequence.",
+    response_model=SequenceSummary,
+    tags=["Sequence"],
+)
+async def sequence_summary_api(
+    id: str = Query(
+        ..., description="Identifier for the type specified in the type parameter"
+    ),
+    type: Optional[SequenceIdType] = Query(
+        SequenceIdType.SEQUENCE, description="Type of the identifier"
+    ),
+):
+    """
+    Retrieve a summary of experimentally determined and predicted structure "
+    "models available for a sequence.
+    """
+    result = await fetch_sequence_summary(id, type)
+    if result is None:
+        return JSONResponse(
+            status_code=HTTP_404_NOT_FOUND,
+            content={},
+        )
+    return result
+
+
+async def fetch_sequence_summary(
+    id: str,
+    type: Optional[SequenceIdType] = SequenceIdType.SEQUENCE,
+) -> Optional[SequenceSummary]:
+    services = get_services(service_type="sequence")
+    calls = []
+    for service in services:
+        base_url = get_base_service_url(service["provider"])
+        final_url = get_final_service_url(
+            base_url, service["accessPoint"], f"?id={id}&type={type.value}"
+        )
+        calls.append(final_url)
+
+    result = await send_async_requests(calls)
+    final_result = []
+
+    for x in result:
+        if x and x.status_code == HTTP_200_OK:
+            try:
+                final_result.append(dict(x.json()))
+            except Exception:
+                logger.error(f"Error parsing response from {x.url}")
+
+    if not final_result:
+        return None
+
+    final_structures: List[SequenceOverview] = []
+    entry: Entry = None
+
+    for item in final_result:
+        # Remove erroneous responses
+        try:
+            SequenceOverview(**item["structures"][0])
+            entry = Entry(**item["entry"])
+            final_structures.extend(item["structures"])
+        except pydantic.error_wrappers.ValidationError:
+            provider = item["structures"][0].get("provider")
+            if provider:
+                logger.warning(
+                    f"{provider} returned an erroneous response for "
+                    f"{id} with type {type.value}"
+                )
+        except Exception:
+            pass
+
+    if not final_structures:
+        return None
+
+    api_result: SequenceSummary = SequenceSummary(
+        **{"entry": entry, "structures": final_structures}
+    )
+
+    return api_result
