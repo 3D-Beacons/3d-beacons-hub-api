@@ -1,6 +1,8 @@
 import time
 from contextlib import asynccontextmanager
+import os
 
+from uvicorn.workers import UvicornWorker
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
@@ -92,6 +94,13 @@ async def add_extra_headers(request: Request, call_next):
     response.headers["X-Process-Time"] = str(process_time)
     response.headers["X-3DBeacons-API-Version"] = schema_version
     return response
+
+
+class CustomUvicornWorker(UvicornWorker):
+    CONFIG_KWARGS = {}
+    root_path = os.environ.get("ROOT_PATH", "")
+    if root_path:
+        CONFIG_KWARGS.update({"root_path": root_path})
 
 
 def custom_openapi():
