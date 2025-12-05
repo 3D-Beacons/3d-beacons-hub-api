@@ -52,7 +52,6 @@ async def test_get_job_dispatcher_json_results_valid(mocker, sample_sequence_has
 
 @pytest.mark.asyncio
 async def test_get_job_dispatcher_json_results_invalid(mocker, sample_sequence_hash):
-
     mocker.patch("worker.helper.requests.get", return_value=None)
 
     with pytest.raises(JobResultsNotFoundException):

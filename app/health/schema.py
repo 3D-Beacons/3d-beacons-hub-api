@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, RootModel
 
 
 # Health Endpoint Models
@@ -30,9 +30,7 @@ class HealthStatus(BaseModel):
     )
 
 
-class HealthResponse(BaseModel):
+class HealthResponse(RootModel[List[HealthStatus]]):
     """Response model for /health endpoint - returns array of status objects"""
 
-    __root__: List[HealthStatus] = Field(
-        ..., description="List of service health statuses"
-    )
+    model_config = {"title": "HealthResponse"}

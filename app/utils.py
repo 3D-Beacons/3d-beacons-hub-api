@@ -78,6 +78,10 @@ def get_final_service_url(*parts):
     """Returns a final service URL, handling existing query parameters."""
     url = "/".join(parts)
     url = re.sub(r"([^:])//", r"\1/", url)
+
+    # remove / before query params
+    url = url.replace("/?", "?")
+
     # Check if there is already a query string
     if "?" in url:
         return url + f"&version={__major__version__}"

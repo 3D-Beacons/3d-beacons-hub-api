@@ -126,7 +126,7 @@ async def get_uniprot_summary_helper(
         try:
             Overview(**item["structures"][0])
             final_structures.extend(item["structures"])
-        except pydantic.error_wrappers.ValidationError:
+        except pydantic.ValidationError:
             provider = item["structures"][0].get("provider")
             if provider:
                 logger.warning(

@@ -1,15 +1,18 @@
+from typing import Any, Dict, List, Optional
+
 import msgpack
 
 from worker.cache.redis_cache import RedisCache
 
 
-def get_job_results(hashed_sequence: str):
-    results = RedisCache.hget("job-results", hashed_sequence, decode=False)
+def get_job_results(hashed_sequence: str) -> Optional[List[Any]]:
+    packed = RedisCache.hget("job-results", hashed_sequence, decode=False)
 
-    if results:
-        results = msgpack.loads(results)
-        return [x for x in results.values()]
-    return
+    if packed is None:
+        return None
+
+    data: Dict[str, Any] = msgpack.loads(packed)
+    return list(data.values())
 
 
 def set_job_results(hashed_sequence: str, result):

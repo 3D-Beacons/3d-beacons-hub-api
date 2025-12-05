@@ -201,6 +201,7 @@ async def fetch_sequence_summary(
             base_url, service["accessPoint"], f"?id={id}&type={type.value}"
         )
         calls.append(final_url)
+    print(calls)
 
     result = await send_async_requests(calls)
     final_result = []
@@ -224,7 +225,7 @@ async def fetch_sequence_summary(
             SequenceOverview(**item["structures"][0])
             entry = Entry(**item["entry"])
             final_structures.extend(item["structures"])
-        except pydantic.error_wrappers.ValidationError:
+        except pydantic.ValidationError:
             provider = item["structures"][0].get("provider")
             if provider:
                 logger.warning(

@@ -105,7 +105,7 @@ async def get_ensembl_summary_helper(
     results = {
         "ensembl_id": qualifier,
         "species": ensembl_mappings["taxonomy"]["species"],
-        "taxid": ensembl_mappings["taxonomy"]["ensemblTaxId"],
+        "taxid": str(ensembl_mappings["taxonomy"]["ensemblTaxId"]),
         "uniprot_mappings": [],
     }
 

@@ -8,4 +8,4 @@ timeout = 120
 keepalive = 5
 threads = 10
 workers = 3
-worker_class = "app.app.CustomUvicornWorker"
+worker_class = "uvicorn.workers.UvicornWorker"
