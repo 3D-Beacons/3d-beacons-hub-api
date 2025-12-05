@@ -34,30 +34,29 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 Below are the list of softwares/tools for the utilities to properly run in the environment.
 
-Python 3.7+
+Python 3.12 (3.12.x) is required to run this project. Newer 3.13+ runtimes remove `cgi` from the stdlib, which our current dependency pins still reference. Install Python from [python.org](https://www.python.org/downloads/).
 
 **Note**
 
 Because [Python 2.7 supports ended January 1](https://pythonclock.org/), 2020, new projects should consider supporting Python 3 only, which is simpler than trying to support both. As a result, support for Python 2.7 in this project has been dropped.
 
 ### Setup the environment
-Setup a Python virtual environment and install required packages.
-```
-$ python3 -m venv venv
-$ source venv/bin/activate
-```
-
-Once activated, it is good practice to update core packaging tools (pip, setuptools, and wheel) to the latest versions.
+This project now uses [uv](https://github.com/astral-sh/uv) for dependency management and virtualenvs. Install uv if you do not have it yet:
 
 ```
-(venv) $ python -m pip install --upgrade pip setuptools wheel
+curl -Ls https://astral.sh/uv/install.sh | sh
 ```
 
-Now install the project dependencies.
+Install all application and development dependencies (uv will create and manage `.venv` automatically):
 
 ```
-(venv) $ pip install -r dev-requirements.txt
-(venv) $ pip install -r requirements.txt
+uv sync --extra dev
+```
+
+You can activate the environment if you prefer, but `uv run ...` will automatically use it:
+
+```
+source .venv/bin/activate
 ```
 
 ### Provide registry data
@@ -65,11 +64,16 @@ This API works on a registry which includes the details of data services and the
 set the environmental variable `REGISTRY_DATA_JSON` as the URL.
 
 ### Run the instance
-To run the API locally, run below commands.
+To run the API locally, use uv to run uvicorn inside the managed environment:
 
 ```
-source venv/bin/activate
-(venv) $ uvicorn app.app:app --reload
+uv run uvicorn app.app:app --reload
+```
+
+If you see `ModuleNotFoundError: No module named 'gunicorn'` during tests, ensure you have synced dependencies after the latest updates:
+
+```
+uv sync --extra dev
 ```
 This spawns a local uvicorn server and hosts the API on it.
 
@@ -96,11 +100,23 @@ Code coverage is provided by the [pytest-cov](https://pytest-cov.readthedocs.io/
 
 Code coverage is configured in `pyproject.toml`.
 
+To run the full test suite and formatting checks with uv-managed tooling:
+
+```
+make test
+# or
+uv run pytest
+```
+
 ### Workflow automation using pre-commit hooks ###
 
-Code formatting and PEP8 compliance are automated using [pre-commit](https://pre-commit.com/) hooks. This is configured in `.pre-commit-config.yaml` which will run these hooks before `commit` ting anything to the repository.
+Code formatting and linting are automated using [pre-commit](https://pre-commit.com/) hooks (ruff for lint/format plus base sanity checks). This is configured in `.pre-commit-config.yaml` and will run before committing.
 
-Please note that this is already installed via dev-requirements.txt.
+Install the hooks into your local git config after syncing dependencies:
+
+```
+uv run pre-commit install
+```
 
 ## Contributors
 - Sreenath Nair - _Initial work_ - [sreenathnair](https://github.com/sreenathnair)
