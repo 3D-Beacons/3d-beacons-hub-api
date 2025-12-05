@@ -10,5 +10,5 @@ def runner():
 
 
 def test_main(runner):
-    result = runner.invoke(cli.main)
+    result = runner.invoke(cli.main, ["--help"])
     assert result.exit_code == 0

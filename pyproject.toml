@@ -1,14 +1,84 @@
 [build-system]
-requires = ["setuptools>=46.0", "wheel"]
+requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "3d-beacons-hub-api"
+version = "1.0.0"
+description = "3D Beacons Hub API server and CLI."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = { file = "LICENSE" }
+authors = [{ name = "Sreenath Sasidharan Nair" }]
+keywords = ["3d-beacons", "fastapi", "api"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+  "fastapi>=0.115.0,<0.116.0",
+  "uvicorn>=0.30.0,<0.31.0",
+  "gunicorn>=22.0.0,<23.0.0",
+  "httpx>=0.27.0,<0.28.0",
+  "requests>=2.32.0,<2.33.0",
+  "prometheus-fastapi-instrumentator>=6.1.0,<7.0.0",
+  "celery>=5.4.0,<5.5.0",
+  "redis>=5.0.0,<6.0.0",
+  "flower>=2.0.0,<2.1.0",
+  "eventlet>=0.35.0,<0.36.0",
+  "msgpack>=1.0.0,<1.1.0",
+  "typing-extensions>=4.12.0,<5.0.0",
+  "pydantic>=2.9.0,<3.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==8.3.3",
+  "pytest-cov==5.0.0",
+  "pytest-asyncio==0.23.7",
+  "pytest-mock==3.14.0",
+  "async-asgi-testclient==1.4.11",
+  "coverage-badge==1.1.0",
+  "pre-commit==3.7.1",
+  "ruff==0.6.9",
+  "autoflake==2.3.1",
+  "tomli==2.0.1",
+  "multidict==6.0.5",
+  "types-redis==4.6.0.20241004",
+  "types-requests==2.32.0.20241016",
+]
+
+[project.scripts]
+hubapi_cli = "app.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/3D-Beacons/3d-beacons-hub-api"
+Repository = "https://github.com/3D-Beacons/3d-beacons-hub-api"
+Issues = "https://github.com/3D-Beacons/3d-beacons-hub-api/issues"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["app*", "worker*"]
+
+[tool.setuptools.package-data]
+"app.config" = ["data.json"]
+
+[tool.uv]
+# Enable packaging for this workspace when using uv.
+package = true
 
 [tool.black]
 # Use the more relaxed max line length permitted in PEP8.
 line-length = 88
-target-version = ["py37"]
+target-version = ["py312"]
 exclude = '''
 /(
-    \.eggs
+  \.eggs
   | \.git
   | \.mypy_cache
   | \.tox
@@ -35,10 +105,16 @@ branch = true
 [tool.coverage.paths]
 # Files with these prefixes are treated as identical for the purposes of coverage combine.
 source = [
-    # The first path is the name to which all paths get unified
-    "app/",
-    # tox on Linux
-    ".tox/py*/lib/python*/site-packages/",
-    # tox on Windows
-    ".tox/py*/Lib/site-packages/",
+  # The first path is the name to which all paths get unified
+  "app/",
+  # tox on Linux
+  ".tox/py*/lib/python*/site-packages/",
+  # tox on Windows
+  ".tox/py*/Lib/site-packages/",
 ]
+
+[tool.mypy]
+warn_unused_configs = true
+ignore_missing_imports = true
+no_implicit_optional = true
+no_strict_optional = true

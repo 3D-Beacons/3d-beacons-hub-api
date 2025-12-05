@@ -36,7 +36,6 @@ def read_data_file(filename):
 
 
 def read_registry_data(data_json_env):
-
     import requests
 
     try:

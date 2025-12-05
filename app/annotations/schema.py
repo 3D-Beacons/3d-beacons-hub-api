@@ -28,16 +28,24 @@ class FeatureType(Enum):
 
 class Region(BaseModel):
     start: int = Field(
-        ..., description="The first position of the annotation", example=23
+        ...,
+        description="The first position of the annotation",
+        json_schema_extra={"example": 23},
     )
-    end: int = Field(..., description="The last position of the annotation", example=42)
+    end: int = Field(
+        ...,
+        description="The last position of the annotation",
+        json_schema_extra={"example": 42},
+    )
     annotation_value: str = Field(
-        None, description="The value of the annotation", example="0.9"
+        None,
+        description="The value of the annotation",
+        json_schema_extra={"example": "0.9"},
     )
     unit: str = Field(
         None,
         description="The unit of the annotation value, if applicable",
-        example="mmol",
+        json_schema_extra={"example": "mmol"},
     )
 
 
@@ -49,12 +57,14 @@ class Evidence(Enum):
 
 class FeatureItem(BaseModel):
     type: FeatureType = Field(
-        ..., description="Type of the annotation", example="ACT_SITE"
+        ...,
+        description="Type of the annotation",
+        json_schema_extra={"example": "ACT_SITE"},
     )
     description: str = Field(
         ...,
         description="Description/Label of the annotation",
-        example="Pfam N1221 (PF07923)",
+        json_schema_extra={"example": "Pfam N1221 (PF07923})"},
     )
     source_name: Optional[str] = Field(
         None,
@@ -75,11 +85,17 @@ class FeatureItem(BaseModel):
 
 
 class Annotation(BaseModel):
-    accession: str = Field(..., description="A UniProt accession", example="P00734")
+    accession: str = Field(
+        ..., description="A UniProt accession", json_schema_extra={"example": "P00734"}
+    )
     id: Optional[str] = Field(
-        None, description="A UniProt identifier", example="FGFR2_HUMAN"
+        None,
+        description="A UniProt identifier",
+        json_schema_extra={"example": "FGFR2_HUMAN"},
     )
     sequence: str = Field(
-        ..., description="The sequence of the protein", example="AFFGVAATRKL"
+        ...,
+        description="The sequence of the protein",
+        json_schema_extra={"example": "AFFGVAATRKL"},
     )
     annotation: Optional[List[FeatureItem]] = None

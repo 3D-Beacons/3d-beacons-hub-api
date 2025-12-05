@@ -3,7 +3,7 @@ import asyncio
 import msgpack
 import pytest
 from async_asgi_testclient import TestClient
-from pydantic.error_wrappers import ValidationError
+from pydantic import ValidationError
 from starlette import status
 
 from app.app import app
@@ -27,7 +27,6 @@ async def test_search_job_id_from_cache(
     sample_sequence,
     sample_sequence_hash,
 ):
-
     mocker.patch(
         "app.sequence.sequence.get_jobdispatcher_id", return_value="non-existing-job-id"
     )
@@ -78,7 +77,6 @@ async def test_result_api_valid_job_id_and_issue_in_celery_job(
 
 @pytest.mark.asyncio
 async def test_result_api_valid_job_id_and_job_pending(mocker, pending_async_result):
-
     mocker.patch(
         "app.sequence.sequence.get_celery_task_id", return_value="valid-job-id"
     )
@@ -98,7 +96,6 @@ async def test_result_api_valid_job_id_and_job_finished(
     mocker,
     finished_none_async_result,
 ):
-
     future = asyncio.Future()
     future.set_result(msgpack.dumps("ncbiblast-2021-01-01-12-12-12"))
     mocker.patch(
@@ -119,7 +116,6 @@ async def test_result_api_valid_job_id_and_job_finished(
 
 @pytest.mark.asyncio
 async def test_submit_sequence_search_job_valid(mocker, sample_sequence):
-
     future = asyncio.Future()
     future.set_result(
         StubHttpResponse(status_code=200, data="ncbiblast-2021-01-01-12-12-12")
@@ -135,7 +131,6 @@ async def test_submit_sequence_search_job_valid(mocker, sample_sequence):
 
 @pytest.mark.asyncio
 async def test_submit_sequence_search_job_invalid(mocker, sample_sequence):
-
     future = asyncio.Future()
     future.set_result(None)
     mocker.patch("app.sequence.helper.request_post", return_value=future)

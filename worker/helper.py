@@ -153,7 +153,8 @@ def get_uniprot_summaries(accession_list):
     response_dict = {}
     with requests.Session() as session:
         for accessions_batch in divide_chunks(
-            accession_list, 100  # UniProt accepts max 100 accessions per request
+            accession_list,
+            100,  # UniProt accepts max 100 accessions per request
         ):
             accessions = ",".join(accessions_batch)
             try_count = 1

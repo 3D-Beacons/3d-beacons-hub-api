@@ -1,13 +1,14 @@
-import os
 import time
+from contextlib import asynccontextmanager
+import os
 
+from uvicorn.workers import UvicornWorker
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.openapi.utils import get_openapi
 from prometheus_fastapi_instrumentator import Instrumentator
 from starlette.requests import Request
-from uvicorn.workers import UvicornWorker
 
 from app import REDIS_URL
 from app.annotations.annotations import annotations_route
@@ -26,7 +27,28 @@ instrumentator = Instrumentator(
 )
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Async context manager for FastAPI lifespan events."""
+    # Startup: load configs
+    from app.config import load_data_file
+    from worker.cache.redis_cache import RedisCache
+
+    RedisCache.init_redis(REDIS_URL, "utf-8")
+    load_data_file()
+
+    yield
+
+    # Shutdown: clear caches
+    from app.config import get_providers, read_data_file
+
+    read_data_file.cache_clear()
+    load_data_file.cache_clear()
+    get_providers.cache_clear()
+
+
 app = FastAPI(
+    lifespan=lifespan,
     docs_url="/",
     title="3D Beacons HUB API",
     description="The 3D-Beacons Network provides unified programmatic access to "
@@ -72,24 +94,6 @@ async def add_extra_headers(request: Request, call_next):
     response.headers["X-Process-Time"] = str(process_time)
     response.headers["X-3DBeacons-API-Version"] = schema_version
     return response
-
-
-@app.on_event("startup")
-async def load_configs():
-    from app.config import load_data_file
-    from worker.cache.redis_cache import RedisCache
-
-    RedisCache.init_redis(REDIS_URL, "utf-8")
-    load_data_file()
-
-
-@app.on_event("shutdown")
-async def clear_config_caches():
-    from app.config import get_providers, load_data_file, read_data_file
-
-    read_data_file.cache_clear()
-    load_data_file.cache_clear()
-    get_providers.cache_clear()
 
 
 class CustomUvicornWorker(UvicornWorker):

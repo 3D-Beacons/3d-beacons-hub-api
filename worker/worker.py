@@ -50,7 +50,6 @@ def retrieve_result(job_id: str, hashed_sequence: str):
             return
 
         if waited_time > MAX_WAIT_TIME:
-
             clear_jobdispatcher_id(hashed_sequence)
             break
         try:

@@ -226,7 +226,7 @@ class SummaryItems(BaseModel):
     created: str = Field(
         ...,
         description="Date of release of model generation in the format of YYYY-MM-DD",
-        example="2021-12-21",
+        json_schema_extra={"example": "2021-12-21"},
     )
     sequence_identity: float = Field(
         ..., ge=0, le=1, description="Sequence identity of model to UniProt sequence"

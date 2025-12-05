@@ -191,7 +191,7 @@ async def get_uniprot_helper(
             Detailed(**item["structures"][0])
             UniprotEntry(**item["uniprot_entry"])
             final_structures.extend(item["structures"])
-        except pydantic.error_wrappers.ValidationError:
+        except pydantic.ValidationError:
             provider = item["structures"][0].get("provider")
             if provider:
                 logger.warning(

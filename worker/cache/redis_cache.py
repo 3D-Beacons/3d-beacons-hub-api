@@ -1,13 +1,15 @@
+from typing import Optional
+
 from redis import Redis
 
 
 class RedisCache:
     """RedisCache class gives access to aioredis functionality"""
 
-    redis_client = None
+    redis_client: Optional[Redis] = None
 
     @classmethod
-    def init_redis(cls, url: str, encoding: str):
+    def init_redis(cls, url: str, encoding: str) -> None:
         if cls.redis_client is None:
             cls.redis_client = Redis.from_url(
                 url,
@@ -16,15 +18,15 @@ class RedisCache:
             )
 
     @classmethod
-    def get(cls, key: str) -> str:
+    def get(cls, key: str) -> Optional[bytes]:
         return cls.redis_client.get(key)
 
     @classmethod
-    def set(cls, key: str, value: str):
-        return cls.redis_client.set(key, value)
+    def set(cls, key: str, value: str) -> bool:
+        return bool(cls.redis_client.set(key, value))
 
     @classmethod
-    def hget(cls, prefix: str, key: str, decode: bool = True) -> str:
+    def hget(cls, prefix: str, key: str, decode: bool = True) -> Optional[bytes | str]:
         value = cls.redis_client.hget(prefix, key)
         if not value:
             return None
@@ -33,13 +35,14 @@ class RedisCache:
         return value
 
     @classmethod
-    def hset(cls, prefix: str, key: str, value: str):
-        return cls.redis_client.hset(prefix, key, value)
+    def hset(cls, prefix: str, key: str, value: str) -> int:
+        return int(cls.redis_client.hset(prefix, key, value))
 
     @classmethod
-    def hdel(cls, prefix: str, key: str):
-        return cls.redis_client.hdel(prefix, key)
+    def hdel(cls, prefix: str, key: str) -> int:
+        return int(cls.redis_client.hdel(prefix, key))
 
     @classmethod
-    def flush(cls):
-        return cls.redis_client.flushall()
+    def flush(cls) -> None:
+        if cls.redis_client:
+            cls.redis_client.flushall()

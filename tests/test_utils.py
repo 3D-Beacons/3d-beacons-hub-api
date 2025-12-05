@@ -69,7 +69,6 @@ def test_get_services(mocker, registry):
 
 
 def test_get_services_exclude_provider(mocker, registry):
-
     mocker.patch("app.config.read_data_file", return_value=registry)
     assert get_services(service_type="serviceOne", exclude_provider="providerTwo") == [
         {
