@@ -23,8 +23,8 @@
             "providerName": "Protein Data Bank in Europe",
             "providerDescription": "PDBe is the European resource for the collection, organisation and dissemination of data on biological macromolecular structures.",
             "providerUrl": "https://www.ebi.ac.uk/pdbe/",
-            "baseServiceUrl": "https://www.ebi.ac.uk/pdbe/aggregated-api/beacons/",
-            "devBaseServiceUrl": "https://wwwdev.ebi.ac.uk/pdbe/aggregated-api/beacons/",
+            "baseServiceUrl": "https://www.ebi.ac.uk/pdbe/api/v2/",
+            "devBaseServiceUrl": "https://wwwdev.ebi.ac.uk/pdbe/api/v2/",
             "providerLogo": "https://www.ebi.ac.uk/pdbe/static/images/logos/PDBe/logo.png"
         },
         {
@@ -32,8 +32,8 @@
             "providerName": "Protein Ensemble Database",
             "providerDescription": "The Protein Ensemble Database (PED) is an open access database for the deposition of structural ensembles, mainly intrinsically disordered proteins (IDPs).",
             "providerUrl": "https://proteinensemble.org/",
-            "baseServiceUrl": "https://proteinensemble.org/api/3d-beacons/",
-            "devBaseServiceUrl": "https://proteinensemble.org/api/3d-beacons/",
+            "baseServiceUrl": "https://deposition.proteinensemble.org/api/v1/3d-beacons/",
+            "devBaseServiceUrl": "https://deposition.proteinensemble.org/api/v1/3d-beacons/",
             "providerLogo": "https://proteinensemble.org/assets/PED_logo.svg"
         },
         {
@@ -42,7 +42,7 @@
             "providerDescription": "AlphaFold is an AI system developed by DeepMind that predicts a protein’s 3D structure from its amino acid sequence. It regularly achieves accuracy competitive with experiment.",
             "providerUrl": "https://alphafold.ebi.ac.uk/",
             "baseServiceUrl": "https://alphafold.ebi.ac.uk/api/",
-            "devBaseServiceUrl": "https://dev.alphafold.ebi.ac.uk/api/",
+            "devBaseServiceUrl": "https://alphafold.ebi.ac.uk/api/",
             "providerLogo": "https://alphafold.ebi.ac.uk/assets/img/dm-logo.png"
         },
         {
@@ -57,11 +57,56 @@
         {
             "providerId": "alphafill",
             "providerName": "AlphaFill Model Data Bank",
-            "providerDescription": "AlphaFill is a databank of AlphaFold models enriched with ligands, cofactors, and ions that are transplanyed from homologous experimental structure models.",
+            "providerDescription": "AlphaFill is a databank of AlphaFold models enriched with ligands, cofactors, and ions that are transplanted from homologous experimental structure models.",
             "providerUrl": "https://alphafill.eu/",
             "baseServiceUrl": "https://alphafill.eu/v1/aff/",
             "devBaseServiceUrl": "https://alphafill.eu/v1/aff/",
             "providerLogo": "https://alphafill.eu/images/alphafill-logo.svg"
+        },
+        {
+            "providerId": "hegelab",
+            "providerName": "hegelab.org",
+            "providerDescription": "Membrane Protein Research Group, Department of Biophysics and Radiation Biology, Semmelweis University, Budapest, Hungary",
+            "providerUrl": "http://www.hegelab.org/",
+            "baseServiceUrl": "https://3dbeacon.hegelab.org/",
+            "devBaseServiceUrl": "https://dev.3dbeacon.hegelab.org/",
+            "providerLogo": "http://www.hegelab.org/images/logo.png"
+        },
+        {
+            "providerId": "modelarchive",
+            "providerName": "ModelArchive",
+            "providerDescription": "ModelArchive is the archive for structural models which are not based on experimental data and complements the PDB archive for experimental structures and PDB-Dev for integrative structures.",
+            "providerUrl": "https://modelarchive.org",
+            "baseServiceUrl": "https://modelarchive.org/3d-beacons/",
+            "devBaseServiceUrl": "https://modelarchive.org/3d-beacons/",
+            "providerLogo": "https://modelarchive.org/app/assets/styles/logos/MA_logo.png"
+        },
+		{
+            "providerId": "isoformio",
+            "providerName": "isoform.io",
+            "providerDescription": "isoform.io provides open access to predicted 3D structures of protein isoforms derived from the human transcriptome.",
+            "providerUrl": "https://isoform.io/",
+            "baseServiceUrl": "https://storage.googleapis.com/isoform.io/",
+            "devBaseServiceUrl": "https://storage.googleapis.com/isoform.io/",
+            "providerLogo": "https://storage.googleapis.com/isoform.io/ccbtext_wbg.png"
+        },
+        {
+            "providerId": "levylab",
+            "providerName": "LevyLab",
+            "providerDescription": "Dataset of validated homomeric AlphaFold models",
+            "providerUrl": "https://shmoo.weizmann.ac.il",
+            "baseServiceUrl": "https://shmoo.weizmann.ac.il/elevy/HomAtlas",
+            "devBaseServiceUrl": "https://shmoo.weizmann.ac.il/elevy/HomAtlas",
+            "providerLogo": "https://shmoo.weizmann.ac.il/elevy/elevylab_logo.jpg"
+        },
+        {
+            "providerId": "bfvd",
+            "providerName": "BFVD",
+            "providerDescription": "BFVD is a large repository of predicted viral protein structures",
+            "providerUrl": "https://bfvd.foldseek.com/",
+            "baseServiceUrl": "https://bfvd.steineggerlab.workers.dev",
+            "devBaseServiceUrl": "https://bfvd.steineggerlab.workers.dev",
+            "providerLogo": "https://raw.githubusercontent.com/sokrypton/ColabFold/main/.github/ColabFold_Marv_Logo.png"
         }
     ],
     "services": [
@@ -71,9 +116,14 @@
             "accessPoint": "uniprot/"
         },
         {
+            "serviceType": "uniprot",
+            "provider": "pdbe",
+            "accessPoint": "beacons/uniprot/"
+        },
+        {
             "serviceType": "summary",
             "provider": "pdbe",
-            "accessPoint": "uniprot/summary/"
+            "accessPoint": "beacons/uniprot/summary/"
         },
         {
             "serviceType": "summary",
@@ -99,6 +149,62 @@
             "serviceType": "summary",
             "provider": "alphafill",
             "accessPoint": "3d-beacon/"
+        },
+
+	      {
+            "serviceType": "summary",
+            "provider": "hegelab",
+            "accessPoint": "uniprot/summary/"
+	      },
+        {
+            "serviceType": "summary",
+            "provider": "modelarchive",
+            "accessPoint": "uniprot/summary/"
+        },
+		{
+            "serviceType": "summary",
+            "provider": "isoformio",
+            "accessPoint": "uniprot/"
+        },
+        {
+            "serviceType": "annotations",
+            "provider": "pdbe",
+            "accessPoint": "beacons/annotations/"
+        },
+        {
+            "serviceType": "summary",
+            "provider": "levylab",
+            "accessPoint": "/"
+        },
+        {
+            "serviceType": "health",
+            "provider": "pdbe",
+            "accessPoint": "health"
+        },
+        {
+            "serviceType": "health",
+            "provider": "swissmodel",
+            "accessPoint": "health/"
+        },
+        {
+            "serviceType": "sequence",
+            "provider": "swissmodel",
+            "accessPoint": "sequence/summary/"
+        },
+        {
+            "serviceType": "sequence",
+            "provider": "modelarchive",
+            "accessPoint": "sequence/summary/"
+        },
+        {
+            "serviceType": "annotations",
+            "provider": "alphafold",
+            "accessPoint": "annotations/"
+        },
+        {
+            "serviceType": "sequence",
+            "provider": "alphafold",
+            "accessPoint": "sequence/summary"
         }
     ]
 }
