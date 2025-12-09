@@ -35,7 +35,9 @@ async def request_get(url: str):
         Response: A Response object.
     """
     response = None
-    async with httpx.AsyncClient() as client:
+    # Explicitly ignore env proxies; k8s envs often inject HTTP(S)_PROXY which can
+    # return 503 from the proxy rather than the upstream service.
+    async with httpx.AsyncClient(trust_env=False) as client:
         try:
             response = await client.get(url, timeout=REQUEST_TIMEOUT)
         except httpx.TimeoutException:
@@ -53,7 +55,7 @@ async def request_get(url: str):
 
 async def request_post(url: str, data):
     response = None
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(trust_env=False) as client:
         try:
             response = await client.post(url, timeout=REQUEST_TIMEOUT, data=data)
         except httpx.TimeoutException:
