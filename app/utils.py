@@ -53,7 +53,7 @@ async def request_get(url: str):
 
 async def request_post(url: str, data):
     response = None
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(trust_env=False) as client:
         try:
             response = await client.post(url, timeout=REQUEST_TIMEOUT, data=data)
         except httpx.TimeoutException:
