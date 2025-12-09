@@ -123,17 +123,18 @@ async def get_uniprot_summary_helper(
 
     for item in final_result:
         # Remove erroneous responses
-        try:
-            Overview(**item["structures"][0])
-            final_structures.extend(item["structures"])
-        except pydantic.ValidationError:
-            provider = item["structures"][0].get("provider")
-            if provider:
-                logger.warning(
-                    f"{provider} returned an erroneous response for {qualifier}"
-                )
-        except Exception:
-            pass
+        for structure in item["structures"]:
+            try:
+                Overview(**structure)
+                final_structures.append(structure)
+            except pydantic.ValidationError:
+                provider = structure.get("provider")
+                if provider:
+                    logger.warning(
+                        f"{provider} returned an erroneous response for {qualifier}"
+                    )
+            except Exception:
+                pass
 
     if not final_structures:
         return None
