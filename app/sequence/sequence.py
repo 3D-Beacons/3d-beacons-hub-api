@@ -161,7 +161,7 @@ async def result(
 
 
 @sequence_route.get(
-    "/",
+    "/summary",
     summary="Sequence Summary",
     description="Retrieve a summary of experimentally determined and predicted"
     "structure models available for a sequence.",
