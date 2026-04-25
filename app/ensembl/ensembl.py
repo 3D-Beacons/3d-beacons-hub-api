@@ -83,9 +83,11 @@ async def get_ensembl_summary_helper(
 
         uniprot_accession = mapping["uniprotEntry"]["uniprotAccession"]
         uniprot_set.add(uniprot_accession)
-
         mapping["ensemblTranscript"].update(
-            {"alignment_difference": mapping["alignment_difference"]}
+            {
+                "alignment_difference": mapping["alignment_difference"],
+                "transcript_id": str(mapping["ensemblTranscript"]["transcript_id"]),
+            }
         )
 
         if not transcript_dict.get(uniprot_accession):
