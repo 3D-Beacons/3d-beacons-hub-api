@@ -65,11 +65,17 @@ async def test_get_ensembl_summaries_api(
         "app.ensembl.ensembl.get_ensembl_mappings", return_value=valid_gifts_response
     )
 
-    uniprot_list_future = asyncio.Future()
-    uniprot_list_future.set_result(uniprot_summary_obj_list)
     mocker.patch(
         "app.ensembl.ensembl.get_list_of_uniprot_summary_helper",
-        return_value=uniprot_list_future,
+        return_value=uniprot_summary_obj_list,
+    )
+    mocker.patch(
+        "app.ensembl.ensembl.get_uniprot_api_results",
+        return_value={},
+    )
+    mocker.patch(
+        "app.ensembl.ensembl.get_uniprot_name",
+        return_value="Test protein",
     )
 
     response = await client.get(
@@ -77,6 +83,12 @@ async def test_get_ensembl_summaries_api(
     )
 
     assert response.status_code == status.HTTP_200_OK
+    response_json = response.json()
+    assert response_json["uniprot_mappings"]
+    assert all(
+        isinstance(mapping["ensembl_transcript"]["transcript_id"], str)
+        for mapping in response_json["uniprot_mappings"]
+    )
 
 
 @pytest.mark.asyncio
