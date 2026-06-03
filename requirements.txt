@@ -93,7 +93,7 @@ pytz==2025.2
     # via flower
 redis==5.3.1
     # via 3d-beacons-hub-api (pyproject.toml)
-requests==2.32.5
+requests==2.33.0
     # via 3d-beacons-hub-api (pyproject.toml)
 six==1.17.0
     # via python-dateutil
