@@ -190,7 +190,7 @@ tzdata==2025.2
     # via
     #   celery
     #   kombu
-urllib3==2.5.0
+urllib3==2.7.0
     # via
     #   requests
     #   types-requests
