@@ -128,7 +128,7 @@ pydantic-core==2.41.5
     # via pydantic
 pyflakes==3.4.0
     # via autoflake
-pyjwt==2.10.1
+pyjwt==2.12.0
     # via redis
 pytest==8.3.3
     # via

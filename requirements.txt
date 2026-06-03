@@ -85,7 +85,7 @@ pydantic==2.12.5
     #   fastapi
 pydantic-core==2.41.5
     # via pydantic
-pyjwt==2.10.1
+pyjwt==2.12.0
     # via redis
 python-dateutil==2.9.0.post0
     # via celery
