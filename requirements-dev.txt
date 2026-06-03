@@ -164,7 +164,7 @@ starlette==0.46.2
     # via fastapi
 tomli==2.0.1
     # via 3d-beacons-hub-api (pyproject.toml)
-tornado==6.5.2
+tornado==6.5.5
     # via flower
 types-cffi==1.17.0.20250915
     # via types-pyopenssl
