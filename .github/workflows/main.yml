@@ -5,6 +5,9 @@ on: [ push ]
 #   pull_request:
 #     branches: [ master, development ]
 
+permissions:
+  contents: read
+
 jobs:
   build:
 
