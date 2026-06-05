@@ -28,7 +28,14 @@ ensembl_route = APIRouter()
 )
 async def get_ensembl_summary(
     qualifier: Any = Path(
-        ..., description=ENSEMBL_QUAL_DESC, example="ENSG00000288864"
+        ...,
+        description=ENSEMBL_QUAL_DESC,
+        openapi_examples={
+            "default": {
+                "summary": "Example Ensembl gene ID",
+                "value": "ENSG00000288864",
+            }
+        },
     ),
     provider: Optional[Any] = Query(
         None, enum=[x["provider"] for x in get_services("summary")]

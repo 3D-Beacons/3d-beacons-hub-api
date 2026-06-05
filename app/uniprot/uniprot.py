@@ -48,7 +48,13 @@ uniprot_route = APIRouter()
     """,
 )
 async def get_uniprot_summary(
-    qualifier: Any = Path(..., description=QUERY_DESC, example="P38398"),
+    qualifier: Any = Path(
+        ...,
+        description=QUERY_DESC,
+        openapi_examples={
+            "default": {"summary": "Example qualifier", "value": "P38398"}
+        },
+    ),
     provider: Optional[Any] = Query(
         None, enum=[x["provider"] for x in get_services("summary")]
     ),
@@ -228,7 +234,9 @@ async def get_uniprot(
     qualifier: Any = Path(
         ...,
         description=QUERY_DESC,
-        example="P38398",
+        openapi_examples={
+            "default": {"summary": "Example qualifier", "value": "P38398"}
+        },
     ),
     provider: Optional[Any] = Query(
         None, enum=[x["provider"] for x in get_services("uniprot")]

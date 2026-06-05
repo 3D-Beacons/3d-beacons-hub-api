@@ -27,7 +27,14 @@ annotations_route = APIRouter()
 )
 async def get_annotations_api(
     uniprot_qualifier: Any = Path(
-        ..., description=UNIPROT_QUAL_DESC, example=UNIPROT_ID_PARAM
+        ...,
+        description=UNIPROT_QUAL_DESC,
+        openapi_examples={
+            "default": {
+                "summary": "Example UniProt accession",
+                "value": UNIPROT_ID_PARAM,
+            }
+        },
     ),
     annotation_type: FeatureType = Query(
         ..., description="Annotation type", alias="type"
