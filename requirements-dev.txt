@@ -95,7 +95,7 @@ iniconfig==2.3.0
     # via pytest
 kombu==5.6.2
     # via celery
-msgpack==1.0.8
+msgpack==1.2.1
     # via 3d-beacons-hub-api (pyproject.toml)
 multidict==6.0.5
     # via
