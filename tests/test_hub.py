@@ -24,7 +24,9 @@ async def test_uniprot_details_forwards_beacon_query_filters(
         {"provider": "provider-one", "accessPoint": "uniprot/"},
         {"provider": "provider-two", "accessPoint": "uniprot/"},
     ]
-    get_services = mocker.patch("app.uniprot.uniprot.get_services", return_value=services)
+    get_services = mocker.patch(
+        "app.uniprot.uniprot.get_services", return_value=services
+    )
     mocker.patch(
         "app.uniprot.uniprot.get_base_service_url",
         side_effect=lambda provider: f"https://{provider}.example/",
@@ -41,7 +43,9 @@ async def test_uniprot_details_forwards_beacon_query_filters(
         res_range="10-20",
     )
 
-    get_services.assert_called_once_with(service_type="uniprot", provider="provider-one")
+    get_services.assert_called_once_with(
+        service_type="uniprot", provider="provider-one"
+    )
     assert send_requests.call_args.args[0] == [
         f"https://provider-one.example/uniprot/P38398.json?version={__major__version__}&range=10-20"
         f"{expected_template}",
@@ -62,7 +66,9 @@ async def test_uniprot_summary_forwards_beacon_query_filters(
         {"provider": "provider-one", "accessPoint": "summary/"},
         {"provider": "provider-two", "accessPoint": "summary/"},
     ]
-    get_services = mocker.patch("app.uniprot.helper.get_services", return_value=services)
+    get_services = mocker.patch(
+        "app.uniprot.helper.get_services", return_value=services
+    )
     mocker.patch(
         "app.uniprot.helper.get_base_service_url",
         side_effect=lambda provider: f"https://{provider}.example/",
