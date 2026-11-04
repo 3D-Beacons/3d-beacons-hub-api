@@ -136,8 +136,6 @@ pyflakes==3.4.0
     # via autoflake
 pygments==2.20.0
     # via pytest
-pyjwt==2.13.0
-    # via redis
 pytest==9.0.3
     # via
     #   3d-beacons-hub-api (pyproject.toml)
@@ -158,7 +156,7 @@ pytz==2026.2
     # via flower
 pyyaml==6.0.3
     # via pre-commit
-redis==5.3.1
+redis==6.4.0
     # via 3d-beacons-hub-api (pyproject.toml)
 requests==2.33.1
     # via
