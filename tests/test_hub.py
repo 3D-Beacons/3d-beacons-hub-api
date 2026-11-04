@@ -5,8 +5,95 @@ from async_asgi_testclient import TestClient
 from starlette import status
 
 from app.app import app
+from app.uniprot.helper import get_uniprot_summary_helper
+from app.uniprot.uniprot import get_uniprot_helper
+from app.version import __major__version__
 
 client = TestClient(app)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("template", "expected_template"),
+    [("1abc.1/A", "&template=1abc.1%2FA"), (None, "")],
+)
+async def test_uniprot_details_forwards_beacon_query_filters(
+    mocker, valid_uniprot_structures, template, expected_template
+):
+    services = [
+        {"provider": "provider-one", "accessPoint": "uniprot/"},
+        {"provider": "provider-two", "accessPoint": "uniprot/"},
+    ]
+    get_services = mocker.patch(
+        "app.uniprot.uniprot.get_services", return_value=services
+    )
+    mocker.patch(
+        "app.uniprot.uniprot.get_base_service_url",
+        side_effect=lambda provider: f"https://{provider}.example/",
+    )
+    send_requests = mocker.patch(
+        "app.uniprot.uniprot.send_async_requests",
+        return_value=valid_uniprot_structures,
+    )
+
+    await get_uniprot_helper(
+        "P38398",
+        provider="provider-one",
+        template=template,
+        res_range="10-20",
+    )
+
+    get_services.assert_called_once_with(
+        service_type="uniprot", provider="provider-one"
+    )
+    assert send_requests.call_args.args[0] == [
+        f"https://provider-one.example/uniprot/P38398.json?version={__major__version__}&range=10-20"
+        f"{expected_template}",
+        f"https://provider-two.example/uniprot/P38398.json?version={__major__version__}&range=10-20"
+        f"{expected_template}",
+    ]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("template", "expected_template"),
+    [("1abc.1/A", "&template=1abc.1%2FA"), (None, "")],
+)
+async def test_uniprot_summary_forwards_beacon_query_filters(
+    mocker, valid_uniprot_structures_summary, template, expected_template
+):
+    services = [
+        {"provider": "provider-one", "accessPoint": "summary/"},
+        {"provider": "provider-two", "accessPoint": "summary/"},
+    ]
+    get_services = mocker.patch(
+        "app.uniprot.helper.get_services", return_value=services
+    )
+    mocker.patch(
+        "app.uniprot.helper.get_base_service_url",
+        side_effect=lambda provider: f"https://{provider}.example/",
+    )
+    send_requests = mocker.patch(
+        "app.uniprot.helper.send_async_requests",
+        return_value=valid_uniprot_structures_summary,
+    )
+
+    await get_uniprot_summary_helper(
+        "P38398",
+        provider="provider-one",
+        template=template,
+        res_range="10-20",
+    )
+
+    get_services.assert_called_once_with(
+        service_type="summary", provider="provider-one", exclude_provider=None
+    )
+    assert send_requests.call_args.args[0] == [
+        f"https://provider-one.example/summary/P38398.json?version={__major__version__}&range=10-20"
+        f"{expected_template}",
+        f"https://provider-two.example/summary/P38398.json?version={__major__version__}&range=10-20"
+        f"{expected_template}",
+    ]
 
 
 # Using 'with TestClient' to test the startup and shutdown events

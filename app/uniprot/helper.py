@@ -1,5 +1,6 @@
 import asyncio
 from typing import Dict, List
+from urllib.parse import urlencode
 
 import pydantic
 from starlette import status
@@ -94,6 +95,8 @@ async def get_uniprot_summary_helper(
 
         if res_range:
             final_url = f"{final_url}&range={res_range}"
+        if template is not None:
+            final_url = f"{final_url}&{urlencode({'template': template})}"
 
         calls.append(final_url)
 

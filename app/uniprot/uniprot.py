@@ -1,4 +1,5 @@
 from typing import Any, List, Optional
+from urllib.parse import urlencode
 
 import pydantic
 from fastapi.params import Path, Query
@@ -164,6 +165,8 @@ async def get_uniprot_helper(
 
         if res_range:
             final_url = f"{final_url}&range={res_range}"
+        if template is not None:
+            final_url = f"{final_url}&{urlencode({'template': template})}"
 
         calls.append(final_url)
 
